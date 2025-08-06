@@ -1,0 +1,1392 @@
+/* Reset und Basis-Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --light-bg: #ecf0f1;
+    --dark-text: #2c3e50;
+    --light-text: #7f8c8d;
+    --border-color: #bdc3c7;
+    --shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--dark-text);
+    background: var(--light-bg);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+#app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* Screen Management */
+.screen {
+    display: none;
+    min-height: 100vh;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Login Screen */
+#loginScreen {
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.login-container {
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-container h1 {
+    color: white;
+    font-size: 28px;
+    margin-bottom: 40px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.login-form {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.login-form h2 {
+    color: var(--primary-color);
+    margin-bottom: 25px;
+    font-size: 24px;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.login-form input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+#loginBtn {
+    width: 100%;
+    padding: 15px;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#loginBtn:hover {
+    background: #2980b9;
+}
+
+#loginBtn:active {
+    transform: scale(0.98);
+}
+
+#loginBtn.loading {
+    position: relative;
+    color: transparent;
+}
+
+#loginBtn.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.login-form.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.login-success {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.error-message {
+    color: var(--danger-color);
+    margin-top: 15px;
+    font-size: 14px;
+    display: none;
+}
+
+.error-message.show {
+    display: block;
+}
+
+/* Main App Layout - Optimiert für iPad */
+#mainApp {
+    background: white;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+#mainApp #appHeader {
+    flex-shrink: 0;
+}
+
+#mainApp #mainNav {
+    flex-shrink: 0;
+}
+
+#mainApp #content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Header */
+#appHeader {
+    background: var(--primary-color);
+    color: white;
+    padding: 15px 20px;
+    box-shadow: var(--shadow);
+}
+
+.user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+}
+
+
+/* Navigation - iPad optimiert */
+#mainNav {
+    background: white;
+    border-bottom: 2px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-btn {
+    flex: 1;
+    padding: 18px 15px;
+    background: none;
+    border: none;
+    color: var(--light-text);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-btn.active {
+    color: var(--secondary-color);
+}
+
+.nav-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--secondary-color);
+}
+
+.nav-btn:hover:not(.active) {
+    background: var(--light-bg);
+}
+
+/* Content Sections - Layout optimiert */
+.content-section {
+    display: none;
+    padding: 15px;
+    animation: fadeIn 0.3s ease-in;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.content-section.active {
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Start Section - MS-04 Homepage Design */
+#startSection {
+    padding: 20px 15px;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(44, 62, 80, 0.05) 100%);
+    min-height: calc(100vh - 140px);
+    overflow-y: auto;
+}
+
+.homepage-hero {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.homepage-hero h2 {
+    color: var(--primary-color);
+    font-size: 24px;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.hero-subtitle {
+    color: var(--light-text);
+    font-size: 16px;
+    margin-bottom: 0;
+}
+
+.homepage-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.welcome-card,
+.quick-stats-card,
+.quick-links-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.welcome-card:hover,
+.quick-stats-card:hover,
+.quick-links-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.card-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    line-height: 1;
+}
+
+.welcome-card h3,
+.quick-stats-card h3,
+.quick-links-card h3 {
+    color: var(--primary-color);
+    font-size: 22px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.welcome-card p {
+    font-size: 16px;
+    margin: 8px 0;
+    color: var(--dark-text);
+}
+
+.login-time {
+    font-size: 14px !important;
+    color: var(--light-text) !important;
+    margin-top: 15px !important;
+}
+
+.user-name-display, .user-class-display {
+    font-weight: 600;
+    color: var(--secondary-color);
+}
+
+.stats-preview {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--secondary-color);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--light-text);
+    margin-top: 5px;
+}
+
+.quick-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.quick-btn {
+    padding: 12px 20px;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.quick-btn:hover {
+    background: #2980b9;
+}
+
+/* Workbook Section - Layout optimiert */
+.workbook-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+#workbookMenu {
+    width: 100%;
+    background: var(--light-bg);
+    padding: 15px;
+    overflow-y: auto;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+    max-height: 200px;
+}
+
+#workbookMenu h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+#topicList {
+    list-style: none;
+}
+
+/* MS-05: Erweiterte Workbook Navigation */
+#topicList .category-header {
+    padding: 8px 12px;
+    margin: 15px 0 5px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-color);
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: default;
+}
+
+#topicList .category-header:first-child {
+    margin-top: 0;
+}
+
+#topicList .topic-item {
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    font-weight: 500;
+    margin-left: 10px;
+}
+
+#topicList .topic-item:hover {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#topicList .topic-item.active {
+    background: var(--secondary-color);
+    color: white;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+}
+
+#workbookContent {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: white;
+}
+
+/* MS-05: Workbook Content Styling */
+.topic-header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--light-bg);
+}
+
+.topic-header h2 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 28px;
+}
+
+.topic-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.category-badge {
+    background: var(--secondary-color);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.page-count {
+    color: var(--light-text);
+    font-size: 14px;
+}
+
+.topic-pages h3 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.pages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.page-card {
+    background: var(--light-bg);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+}
+
+.page-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-color: var(--secondary-color);
+}
+
+.page-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.page-card h4 {
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.page-type {
+    color: var(--light-text);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.has-images-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--secondary-color);
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 14px;
+}
+
+.page-btn {
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.page-btn:hover {
+    background: #2980b9;
+}
+
+/* MS-05: Placeholder Styling */
+.topic-placeholder {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(44, 62, 80, 0.05) 100%);
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.placeholder-info h4 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.placeholder-info p {
+    color: var(--light-text);
+    margin-bottom: 20px;
+}
+
+.placeholder-info ul {
+    list-style: none;
+    display: inline-block;
+    text-align: left;
+}
+
+.placeholder-info li {
+    color: var(--dark-text);
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+/* MS-05: Page Layout */
+.page-header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--light-bg);
+}
+
+.back-btn {
+    background: var(--light-bg);
+    color: var(--primary-color);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: background 0.3s ease;
+}
+
+.back-btn:hover {
+    background: var(--border-color);
+}
+
+.page-header h2 {
+    color: var(--primary-color);
+    font-size: 24px;
+    margin: 0;
+}
+
+.content-placeholder {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.placeholder-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.content-placeholder h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.content-placeholder > p {
+    color: var(--light-text);
+    margin-bottom: 30px;
+}
+
+.page-framework {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* MS-05: Responsive Workbook Layout */
+@media (min-width: 768px) {
+    .pages-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+    
+    .page-framework {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .content-area {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (min-width: 1024px) {
+    .pages-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+    
+    .page-framework {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .content-area {
+        grid-column: auto;
+    }
+}
+
+.content-area,
+.interaction-area,
+.progress-area {
+    background: var(--light-bg);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: left;
+}
+
+.page-framework h4 {
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.page-framework p {
+    color: var(--light-text);
+    font-size: 14px;
+    margin: 0;
+}
+
+/* MS-06: Bilder-Integration Styling */
+.page-image-container {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.page-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.page-images-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin-bottom: 30px;
+}
+
+.gallery-item {
+    background: var(--light-bg);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.gallery-item:hover {
+    transform: none;
+}
+
+.gallery-image {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+/* MS-06: Responsive Bilder für iPad */
+@media (min-width: 768px) {
+    .page-image-container {
+        max-width: 80%;
+        margin: 0 auto 40px;
+    }
+    
+    .page-images-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 25px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .page-image-container {
+        max-width: 70%;
+    }
+    
+    .page-images-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+    }
+    
+    .page-image {
+        max-height: 600px;
+        object-fit: contain;
+    }
+}
+
+/* Progress Section */
+.progress-bar-container {
+    max-width: 600px;
+    margin: 30px auto;
+}
+
+.progress-bar {
+    height: 30px;
+    background: var(--light-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--success-color), var(--secondary-color));
+    width: 0%;
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+}
+
+.progress-text {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Tablet Portrait (ab 480px) */
+@media only screen and (min-width: 480px) {
+    .homepage-hero h2 {
+        font-size: 28px;
+    }
+    
+    .hero-subtitle {
+        font-size: 18px;
+    }
+    
+    .homepage-grid {
+        gap: 25px;
+        padding: 0 20px;
+    }
+    
+    .welcome-card,
+    .quick-stats-card,
+    .quick-links-card {
+        padding: 25px;
+    }
+    
+    #startSection {
+        padding: 25px 20px;
+    }
+}
+
+/* iPad Portrait (ab 768px) */
+@media only screen and (min-width: 768px) {
+    .homepage-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        padding: 0 30px;
+    }
+    
+    .welcome-card {
+        grid-column: 1 / -1;
+    }
+    
+    .homepage-hero {
+        margin-bottom: 50px;
+    }
+    
+    .homepage-hero h2 {
+        font-size: 32px;
+    }
+    
+    #startSection {
+        padding: 40px 30px;
+    }
+    
+    .login-container {
+        max-width: 500px;
+    }
+    
+    .nav-btn {
+        font-size: 18px;
+        padding: 20px;
+        min-height: 60px;
+    }
+    
+    .workbook-container {
+        flex-direction: row;
+    }
+    
+    #workbookMenu {
+        width: 280px;
+        border-right: 1px solid var(--border-color);
+        border-bottom: none;
+        max-height: none;
+        padding: 20px;
+    }
+    
+    #workbookContent {
+        padding: 25px;
+    }
+    
+    #appHeader {
+        padding: 20px;
+    }
+    
+    .user-info {
+        font-size: 20px;
+    }
+    
+    .content-section {
+        padding: 30px;
+    }
+}
+
+/* iPad Landscape / Desktop (ab 1024px) */
+@media only screen and (min-width: 1024px) {
+    .homepage-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        padding: 0 40px;
+    }
+    
+    .welcome-card {
+        grid-column: auto;
+    }
+    
+    .homepage-hero h2 {
+        font-size: 36px;
+    }
+    
+    #startSection {
+        padding: 50px 40px;
+    }
+    
+    #workbookMenu {
+        width: 320px;
+        padding: 30px;
+    }
+    
+    #workbookContent {
+        padding: 40px;
+    }
+}
+
+/* Landscape Mode - kompakter für geringe Höhe */
+@media only screen and (orientation: landscape) and (max-height: 768px) {
+    #appHeader {
+        padding: 10px 20px;
+    }
+    
+    .nav-btn {
+        padding: 12px;
+    }
+    
+    .workbook-container {
+        height: calc(100vh - 120px);
+    }
+    
+    .homepage-hero {
+        margin-bottom: 20px;
+    }
+    
+    .homepage-hero h2 {
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
+    
+    .hero-subtitle {
+        font-size: 14px;
+    }
+    
+    #startSection {
+        padding: 15px 20px;
+    }
+    
+    .homepage-grid {
+        gap: 15px;
+    }
+    
+    .welcome-card,
+    .quick-stats-card,
+    .quick-links-card {
+        padding: 15px;
+    }
+}
+
+/* Touch und Pencil Support */
+input[type="text"],
+input[type="password"],
+textarea,
+button {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+canvas {
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 12px 24px;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: #2980b9;
+}
+
+.btn-success {
+    background: var(--success-color);
+}
+
+.btn-success:hover {
+    background: #229954;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+/* MS-07: Eingabefelder Styling */
+.page-inputs,
+.page-questions {
+    margin-top: 30px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.question-group {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: var(--light-bg);
+    border-radius: 10px;
+}
+
+.question-text {
+    color: var(--primary-color);
+    font-size: 16px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.question-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.workbook-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.workbook-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.workbook-textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.workbook-textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* iPad Touch Optimierung */
+@media (min-width: 768px) {
+    .workbook-input,
+    .workbook-textarea {
+        font-size: 18px;
+        padding: 15px 18px;
+    }
+    
+    .question-text {
+        font-size: 18px;
+    }
+    
+    .question-group {
+        padding: 25px;
+    }
+}
+
+/* Placeholder Styling */
+.workbook-input::placeholder,
+.workbook-textarea::placeholder {
+    color: var(--light-text);
+    opacity: 0.7;
+}
+
+/* MS-08: Zeichenfunktion & Apple Pencil Support */
+.drawing-canvas {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: white;
+    cursor: crosshair;
+    display: block;
+    margin: 10px auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.drawing-canvas:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.drawing-area {
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background: var(--light-bg);
+    border-radius: 10px;
+}
+
+.drawing-area h4 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.drawing-toolbar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tool-group {
+    display: flex;
+    gap: 5px;
+}
+
+.tool-btn,
+.clear-btn {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    background: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+}
+
+.tool-btn:hover,
+.clear-btn:hover {
+    border-color: var(--secondary-color);
+    background: rgba(52, 152, 219, 0.1);
+}
+
+.tool-btn.active {
+    border-color: var(--secondary-color);
+    background: var(--secondary-color);
+    color: white;
+}
+
+.clear-btn {
+    border-color: var(--danger-color);
+}
+
+.clear-btn:hover {
+    border-color: var(--danger-color);
+    background: rgba(231, 76, 60, 0.1);
+}
+
+/* Zeichenbereiche für spezielle Seiten */
+.name-drawing-area,
+.class-drawing-area {
+    display: inline-block;
+    margin: 10px 15px;
+    vertical-align: top;
+}
+
+.connection-drawing-area {
+    display: inline-block;
+    margin: 20px;
+    vertical-align: top;
+    max-width: 250px;
+}
+
+.connection-drawing-area .drawing-canvas {
+    border: 2px dashed var(--border-color);
+    background: #fafafa;
+}
+
+/* iPad-spezifische Optimierungen */
+@media (min-width: 768px) {
+    .drawing-canvas {
+        cursor: none; /* Apple Pencil hat eigenen Cursor */
+    }
+    
+    .tool-btn,
+    .clear-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 18px;
+    }
+    
+    .drawing-toolbar {
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .drawing-area {
+        padding: 20px;
+    }
+}
+
+/* Landscape Mode Anpassungen für iPad */
+@media (orientation: landscape) and (max-height: 768px) {
+    .drawing-area {
+        margin: 10px 0;
+        padding: 10px;
+    }
+    
+    .drawing-toolbar {
+        padding: 8px;
+    }
+    
+    .tool-btn,
+    .clear-btn {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* Touch-Feedback für Buttons */
+.tool-btn:active,
+.clear-btn:active {
+    transform: scale(0.95);
+}
+
+/* Canvas-Responsive Verhalten */
+@media (max-width: 480px) {
+    .drawing-canvas {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .connection-drawing-area {
+        max-width: 100%;
+        margin: 10px 0;
+        display: block;
+    }
+    
+    .name-drawing-area,
+    .class-drawing-area {
+        display: block;
+        margin: 15px 0;
+        text-align: center;
+    }
+}
+
+/* Drawing Areas Layout */
+.drawing-areas {
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(52, 152, 219, 0.05);
+    border-radius: 12px;
+    border: 2px dashed var(--border-color);
+}
+
+.drawing-areas h3 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 18px;
+}
+
+/* Touch-optimierte Canvas-Größen */
+@media (min-width: 768px) {
+    .name-drawing-area .drawing-canvas,
+    .class-drawing-area .drawing-canvas {
+        width: 400px;
+        height: 50px;
+    }
+    
+    .connection-drawing-area .drawing-canvas {
+        width: 250px;
+        height: 180px;
+    }
+}
+
+/* Ultra-responsive für sehr kleine Bildschirme */
+@media (max-width: 320px) {
+    .drawing-toolbar {
+        gap: 5px;
+        padding: 8px;
+    }
+    
+    .tool-btn,
+    .clear-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+    
+    .drawing-canvas {
+        min-height: 120px;
+    }
+}
+
+/* Cleanup - Profil CSS entfernt für MS-02 */

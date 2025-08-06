@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#2c3e50">
+    
+    <title>Digitales Werkunterricht-Arbeitsbuch</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/icon-192.png">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <meta name="description" content="Digitales Arbeitsbuch für den Werkunterricht">
+</head>
+<body>
+    <div id="app">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="screen active">
+            <div class="login-container">
+                <h1>Digitales Werkunterricht-Arbeitsbuch</h1>
+                <div class="login-form">
+                    <h2>Anmeldung</h2>
+                    <input type="text" id="username" placeholder="Name" autocomplete="username">
+                    <input type="password" id="password" placeholder="Passwort" autocomplete="current-password">
+                    <button id="loginBtn" type="button">Anmelden</button>
+                    <div id="loginError" class="error-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App -->
+        <div id="mainApp" class="screen">
+            <!-- Header mit Benutzerinfo -->
+            <header id="appHeader">
+                <div class="user-info">
+                    <span id="userName"></span>
+                    <span id="userClass"></span>
+                </div>
+            </header>
+
+            <!-- Navigation -->
+            <nav id="mainNav">
+                <button class="nav-btn active" data-section="start">Start</button>
+                <button class="nav-btn" data-section="workbook">Arbeitsbuch</button>
+                <button class="nav-btn" data-section="exam">Prüfung</button>
+                <button class="nav-btn" data-section="progress">Fortschritt</button>
+            </nav>
+
+            <!-- Content Sections -->
+            <main id="content">
+                <!-- Start Section -->
+                <section id="startSection" class="content-section active">
+                    <div class="homepage-hero">
+                        <h2>Willkommen im digitalen Arbeitsbuch</h2>
+                        <p class="hero-subtitle">Dein digitaler Begleiter für den Werkunterricht</p>
+                    </div>
+                    
+                    <div class="homepage-grid">
+                        <div class="welcome-card">
+                            <div class="card-icon">👋</div>
+                            <h3>Hallo <span class="user-name-display"></span>!</h3>
+                            <p>Klasse: <span class="user-class-display"></span></p>
+                            <p class="login-time">Angemeldet: <span id="loginTime"></span></p>
+                        </div>
+                        
+                        <div class="quick-stats-card">
+                            <div class="card-icon">📊</div>
+                            <h3>Dein Fortschritt</h3>
+                            <div class="stats-preview">
+                                <div class="stat-item">
+                                    <span class="stat-number" id="completedTopics">0</span>
+                                    <span class="stat-label">Themen</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number" id="progressPercent">0%</span>
+                                    <span class="stat-label">Fortschritt</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-links-card">
+                            <div class="card-icon">🚀</div>
+                            <h3>Schnellstart</h3>
+                            <div class="quick-buttons">
+                                <button class="quick-btn" onclick="App.navigateTo('workbook')">Arbeitsbuch öffnen</button>
+                                <button class="quick-btn" onclick="App.navigateTo('progress')">Fortschritt anzeigen</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Workbook Section -->
+                <section id="workbookSection" class="content-section">
+                    <div class="workbook-container">
+                        <aside id="workbookMenu">
+                            <h3>Inhalt</h3>
+                            <ul id="topicList"></ul>
+                        </aside>
+                        <div id="workbookContent">
+                            <p>Wähle ein Thema aus dem Menü links.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Exam Section -->
+                <section id="examSection" class="content-section">
+                    <h2>Prüfungsmodus</h2>
+                    <div id="examContent">
+                        <!-- Dynamischer Prüfungsinhalt -->
+                    </div>
+                </section>
+
+                <!-- Progress Section -->
+                <section id="progressSection" class="content-section">
+                    <h2>Dein Fortschritt</h2>
+                    <div id="progressContent">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <span class="progress-text" id="progressText">0%</span>
+                        </div>
+                        <div id="statsContent">
+                            <!-- Statistiken -->
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript Module -->
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/workbook.js"></script>
+    <script src="js/drawing.js"></script>
+    <script src="js/exam.js"></script>
+    <script src="js/progress.js"></script>
+    <script src="js/app.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registriert:', registration);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker Registrierung fehlgeschlagen:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
