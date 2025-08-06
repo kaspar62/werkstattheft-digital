@@ -170,8 +170,9 @@ const App = {
                     }
                     break;
                 case 'progress':
-                    // Nur Basis-Anzeige für MS-03
+                    // MS-09: Erweiterte Progress-Anzeige
                     Progress.updateDisplay();
+                    Progress.showStats();
                     break;
                 case 'workbook':
                     // Menu initialisieren für MS-03
