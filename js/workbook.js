@@ -1079,6 +1079,10 @@ const Workbook = {
                     ← Zurück zur Übersicht
                 </button>
                 <h2>${page.title}</h2>
+                <!-- MS-09: Save Button -->
+                <button id="savePageBtn" class="btn btn-primary" onclick="Workbook.savePage()">
+                    💾 Speichern
+                </button>
             </div>
             
             <div class="page-content">
@@ -1095,6 +1099,8 @@ const Workbook = {
         // MS-08: Zeichenbereiche nach DOM-Update initialisieren
         setTimeout(() => {
             this.initializeDrawingForPage(page.id);
+            // MS-09: Gespeicherte Daten laden
+            this.loadPageData(page.id);
         }, 100);
     },
     
@@ -1169,29 +1175,125 @@ const Workbook = {
         }
     },
     
-    // Antwort speichern
-    saveAnswer(topicId) {
-        const textarea = document.getElementById(`answer-${topicId}`);
-        if (!textarea) return;
+    // MS-09: Seite speichern (alle Eingabefelder und Zeichnungen)
+    savePage() {
+        if (!this.currentPage) return;
         
-        const data = {
-            answer: textarea.value,
-            timestamp: new Date().toISOString()
+        const pageId = this.currentPage.id;
+        const pageData = {
+            timestamp: new Date().toISOString(),
+            inputs: {},
+            canvases: {}
         };
         
-        Storage.saveWorkbookData(topicId, data);
+        // Alle Input-Felder sammeln
+        const inputs = document.querySelectorAll('.workbook-input, .workbook-textarea');
+        inputs.forEach((input, index) => {
+            pageData.inputs[`input_${index}`] = input.value;
+        });
         
-        // Feedback
-        const btn = event.target;
+        // Canvas-Zeichnungen speichern
+        if (Drawing && Drawing.canvasInstances) {
+            Drawing.canvasInstances.forEach((instance, containerId) => {
+                const dataURL = Drawing.getCanvasData(containerId);
+                if (dataURL) {
+                    // Canvas ID extrahieren
+                    const canvasId = containerId.replace('-container', '');
+                    Storage.saveCanvasData(pageId, canvasId, dataURL);
+                    pageData.canvases[canvasId] = true; // Marker dass Canvas existiert
+                }
+            });
+        }
+        
+        // Daten speichern
+        Storage.saveWorkbookData(pageId, pageData);
+        
+        // Feedback anzeigen
+        this.showSaveConfirmation();
+        
+        // Fortschritt aktualisieren
+        this.updatePageProgress();
+    },
+    
+    // MS-09: Gespeicherte Daten für Seite laden
+    loadPageData(pageId) {
+        const savedData = Storage.getWorkbookData(pageId);
+        if (!savedData) return;
+        
+        // Input-Felder wiederherstellen
+        if (savedData.inputs) {
+            const inputs = document.querySelectorAll('.workbook-input, .workbook-textarea');
+            inputs.forEach((input, index) => {
+                const savedValue = savedData.inputs[`input_${index}`];
+                if (savedValue !== undefined) {
+                    input.value = savedValue;
+                }
+            });
+        }
+        
+        // Canvas-Zeichnungen wiederherstellen
+        if (savedData.canvases && Drawing) {
+            setTimeout(() => {
+                Object.keys(savedData.canvases).forEach(canvasId => {
+                    const dataURL = Storage.getCanvasData(pageId, canvasId);
+                    if (dataURL) {
+                        Drawing.loadCanvasData(canvasId + '-container', dataURL);
+                    }
+                });
+            }, 200); // Warten bis Canvas initialisiert sind
+        }
+    },
+    
+    // Save-Bestätigung anzeigen
+    showSaveConfirmation() {
+        const btn = document.getElementById('savePageBtn');
+        if (!btn) return;
+        
         const originalText = btn.textContent;
-        btn.textContent = 'Gespeichert!';
+        btn.textContent = '✅ Gespeichert!';
         btn.classList.add('btn-success');
+        btn.disabled = true;
         
         setTimeout(() => {
             btn.textContent = originalText;
+            btn.classList.remove('btn-success');
+            btn.disabled = false;
         }, 2000);
+    },
+    
+    // MS-09: Fortschritt für aktuelle Seite aktualisieren
+    updatePageProgress() {
+        const allWorkbookData = Storage.getAllWorkbookData();
+        let totalPages = 0;
+        let completedPages = 0;
         
-        // Fortschritt aktualisieren
-        Progress.updateProgress(topicId);
+        // Alle Seiten zählen
+        this.topics.forEach(topic => {
+            totalPages += topic.pages.length;
+            topic.pages.forEach(page => {
+                if (allWorkbookData[page.id]) {
+                    completedPages++;
+                }
+            });
+        });
+        
+        // Fortschritt berechnen und anzeigen
+        const progressPercent = totalPages > 0 ? Math.round((completedPages / totalPages) * 100) : 0;
+        
+        // Progress-Anzeige aktualisieren
+        const progressEl = document.getElementById('workbookProgress');
+        if (progressEl) {
+            progressEl.textContent = `${progressPercent}%`;
+        }
+        
+        // Homepage-Stats aktualisieren
+        if (window.App && window.App.updateHomepageStats) {
+            window.App.updateHomepageStats();
+        }
+    },
+    
+    // Alte Funktion für Kompatibilität
+    saveAnswer(topicId) {
+        this.savePage();
     }
 };
