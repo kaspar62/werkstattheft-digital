@@ -14,7 +14,7 @@ const Storage = {
         return data ? JSON.parse(data) : null;
     },
     
-    // Arbeitsbuch Daten speichern
+    // Arbeitsbuch Daten speichern - MS-09 erweitert für Inputs und Canvas
     saveWorkbookData(pageId, data) {
         const key = this.prefix + 'workbook_' + pageId;
         localStorage.setItem(key, JSON.stringify(data));
@@ -25,6 +25,28 @@ const Storage = {
         const key = this.prefix + 'workbook_' + pageId;
         const data = localStorage.getItem(key);
         return data ? JSON.parse(data) : null;
+    },
+    
+    // MS-09: Canvas-Zeichnung speichern
+    saveCanvasData(pageId, canvasId, dataURL) {
+        const key = this.prefix + 'canvas_' + pageId + '_' + canvasId;
+        localStorage.setItem(key, dataURL);
+    },
+    
+    // MS-09: Canvas-Zeichnung laden
+    getCanvasData(pageId, canvasId) {
+        const key = this.prefix + 'canvas_' + pageId + '_' + canvasId;
+        return localStorage.getItem(key);
+    },
+    
+    // MS-09: Alle Canvas-Daten für eine Seite löschen
+    clearCanvasData(pageId) {
+        const keys = Object.keys(localStorage);
+        keys.forEach(key => {
+            if (key.startsWith(this.prefix + 'canvas_' + pageId + '_')) {
+                localStorage.removeItem(key);
+            }
+        });
     },
     
     // Fortschritt speichern
