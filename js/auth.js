@@ -12,25 +12,53 @@ const Auth = {
     
     // Login Funktion
     login(username, password) {
-        // Input Validierung
-        if (!username || !password) {
+        // MS-15: Verbesserte Input Validierung
+        if (!username || typeof username !== 'string' || username.trim() === '') {
             return { 
                 success: false, 
-                error: 'Bitte alle Felder ausfüllen' 
+                error: 'Bitte Namen eingeben' 
             };
         }
         
-        // Benutzer suchen
-        const user = this.users.find(u => 
-            u.name.toLowerCase() === username.toLowerCase() && 
-            u.password === password
-        );
+        if (!password || typeof password !== 'string' || password.trim() === '') {
+            return { 
+                success: false, 
+                error: 'Bitte Passwort eingeben' 
+            };
+        }
+        
+        // MS-15: Sichere String-Behandlung
+        const cleanUsername = username.trim();
+        const cleanPassword = password.trim();
+        
+        // Benutzer suchen mit robusterer Vergleichslogik
+        const user = this.users.find(u => {
+            if (!u.name || !u.password) {
+                console.warn('MS-15: Invalid user data found:', u);
+                return false;
+            }
+            return u.name.toLowerCase().trim() === cleanUsername.toLowerCase() && 
+                   u.password === cleanPassword;
+        });
         
         if (user) {
-            this.currentUser = { ...user };
-            delete this.currentUser.password;
-            Storage.saveUser(this.currentUser);
-            return { success: true, user: this.currentUser };
+            // MS-15: Sichere User-Objekterstellung
+            this.currentUser = { 
+                name: user.name,
+                class: user.class
+            };
+            
+            // MS-15: Error-Handling für Storage
+            try {
+                Storage.saveUser(this.currentUser);
+                return { success: true, user: this.currentUser };
+            } catch (error) {
+                console.error('MS-15: Failed to save user:', error);
+                return { 
+                    success: false, 
+                    error: 'Fehler beim Speichern. Bitte erneut versuchen.' 
+                };
+            }
         }
         
         return { success: false, error: 'Falscher Benutzername oder Passwort' };
@@ -38,22 +66,54 @@ const Auth = {
     
     // Auto-Login prüfen
     checkAutoLogin() {
-        const savedUser = Storage.getUser();
-        if (savedUser) {
-            this.currentUser = savedUser;
-            return true;
+        try {
+            const savedUser = Storage.getUser();
+            if (savedUser && savedUser.name && savedUser.class) {
+                // MS-15: Validiere gespeicherte User-Daten
+                this.currentUser = {
+                    name: savedUser.name,
+                    class: savedUser.class
+                };
+                return true;
+            }
+        } catch (error) {
+            console.error('MS-15: Auto-login failed:', error);
+            // MS-15: Clear corrupted data
+            try {
+                Storage.clearUser();
+            } catch (clearError) {
+                console.error('MS-15: Failed to clear corrupted user data:', clearError);
+            }
         }
         return false;
     },
     
     // Benutzer abrufen
     getUser() {
-        return this.currentUser;
+        // MS-15: Defensive Kopie zurückgeben
+        return this.currentUser ? { ...this.currentUser } : null;
+    },
+    
+    // MS-15: Validiere aktuellen User
+    isAuthenticated() {
+        return this.currentUser !== null && 
+               this.currentUser.name && 
+               this.currentUser.class;
     },
     
     // Logout
     logout() {
         this.currentUser = null;
-        Storage.clearAll();
+        try {
+            Storage.clearAll();
+        } catch (error) {
+            console.error('MS-15: Logout cleanup failed:', error);
+            // Try alternative cleanup
+            try {
+                Storage.clearUser();
+            } catch (clearError) {
+                console.error('MS-15: Failed to clear user data:', clearError);
+            }
+        }
     }
 };
