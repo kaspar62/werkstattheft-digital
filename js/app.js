@@ -163,11 +163,8 @@ const App = {
             // Spezielle Aktionen pro Section (MINIMAL für MS-03)
             switch(section) {
                 case 'exam':
-                    // Nur Platzhalter für MS-03
-                    const examContent = document.getElementById('examContent');
-                    if (examContent && !examContent.hasChildNodes()) {
-                        examContent.innerHTML = '<p>Prüfungsbereich - Layout bereit für MS-11</p><p><small>Umlaut-Test: Größe, Rückgabe, Prüfung, Lösung, Wärme, Stärke</small></p>';
-                    }
+                    // MS-11: Prüfungsbereich aktivieren
+                    Exam.showExamContent();
                     break;
                 case 'progress':
                     // MS-09: Erweiterte Progress-Anzeige
