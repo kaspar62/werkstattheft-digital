@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MS-15 Auth Testing</title>
+</head>
+<body>
+    <h1>MS-15 Auth Module Tests</h1>
+    <div id="results"></div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // MS-15: Auth module comprehensive testing
+        const results = document.getElementById('results');
+        
+        function log(message) {
+            results.innerHTML += message + '<br>';
+            console.log(message);
+        }
+        
+        function runTest(name, testFn) {
+            try {
+                const result = testFn();
+                log(`✅ ${name}: PASS`);
+                return true;
+            } catch (error) {
+                log(`❌ ${name}: FAIL - ${error.message}`);
+                return false;
+            }
+        }
+        
+        log('MS-15 Auth Module Security & Stability Tests:');
+        let testsPassed = 0;
+        let testsTotal = 0;
+        
+        function test(name, fn) {
+            testsTotal++;
+            if (runTest(name, fn)) testsPassed++;
+        }
+        
+        // Clear localStorage for clean tests
+        localStorage.clear();
+        Auth.currentUser = null;
+        
+        // Test 1: Input Validation
+        log('<h2>1. Login Input Validation:</h2>');
+        
+        test('Empty username rejection', () => {
+            const result = Auth.login('', 'password');
+            if (result.success !== false || !result.error.includes('Namen eingeben')) {
+                throw new Error('Should reject empty username');
+            }
+            return true;
+        });
+        
+        test('Whitespace-only username rejection', () => {
+            const result = Auth.login('   ', 'password');
+            if (result.success !== false || !result.error.includes('Namen eingeben')) {
+                throw new Error('Should reject whitespace-only username');
+            }
+            return true;
+        });
+        
+        test('Empty password rejection', () => {
+            const result = Auth.login('testuser', '');
+            if (result.success !== false || !result.error.includes('Passwort eingeben')) {
+                throw new Error('Should reject empty password');
+            }
+            return true;
+        });
+        
+        test('Non-string input handling', () => {
+            const result1 = Auth.login(null, 'password');
+            const result2 = Auth.login('username', null);
+            const result3 = Auth.login(123, 'password');
+            
+            if (result1.success !== false || result2.success !== false || result3.success !== false) {
+                throw new Error('Should reject non-string inputs');
+            }
+            return true;
+        });
+        
+        // Test 2: Authentication Logic
+        log('<h2>2. Authentication Logic:</h2>');
+        
+        test('Valid login success', () => {
+            const result = Auth.login('Kaspar Haessig', '001b26c');
+            if (!result.success || !result.user || result.user.name !== 'Kaspar Haessig') {
+                throw new Error('Valid login should succeed');
+            }
+            return true;
+        });
+        
+        test('Case-insensitive username matching', () => {
+            Auth.currentUser = null; // Reset
+            const result = Auth.login('kaspar haessig', '001b26c');
+            if (!result.success || !result.user || result.user.name !== 'Kaspar Haessig') {
+                throw new Error('Should match username case-insensitively');
+            }
+            return true;
+        });
+        
+        test('Invalid credentials rejection', () => {
+            Auth.currentUser = null; // Reset
+            const result = Auth.login('Invalid User', 'wrongpass');
+            if (result.success !== false || !result.error.includes('Falscher Benutzername')) {
+                throw new Error('Should reject invalid credentials');
+            }
+            return true;
+        });
+        
+        test('Partial name matching prevention', () => {
+            Auth.currentUser = null; // Reset
+            const result = Auth.login('Kaspar', '001b26c');
+            if (result.success !== false) {
+                throw new Error('Should not match partial names');
+            }
+            return true;
+        });
+        
+        // Test 3: Session Management
+        log('<h2>3. Session Management:</h2>');
+        
+        test('User session persistence', () => {
+            Auth.login('Kim Kellerman', '001b26b');
+            const user = Auth.getUser();
+            if (!user || user.name !== 'Kim Kellerman' || user.class !== 'B26b') {
+                throw new Error('User session not properly stored');
+            }
+            return true;
+        });
+        
+        test('Defensive user copy', () => {
+            Auth.login('Heike Beer', '002b26b');
+            const user1 = Auth.getUser();
+            const user2 = Auth.getUser();
+            
+            // Modify one copy
+            user1.name = 'Modified Name';
+            
+            // Check if original is protected
+            if (user2.name !== 'Heike Beer') {
+                throw new Error('User object not properly protected');
+            }
+            return true;
+        });
+        
+        test('Authentication status check', () => {
+            Auth.login('Kaspar Haessig', '001b26c');
+            if (!Auth.isAuthenticated()) {
+                throw new Error('isAuthenticated should return true for logged in user');
+            }
+            
+            Auth.currentUser = null;
+            if (Auth.isAuthenticated()) {
+                throw new Error('isAuthenticated should return false for no user');
+            }
+            
+            // Test with invalid user object
+            Auth.currentUser = {name: null};
+            if (Auth.isAuthenticated()) {
+                throw new Error('isAuthenticated should return false for invalid user');
+            }
+            return true;
+        });
+        
+        // Test 4: Auto-login and Data Recovery
+        log('<h2>4. Auto-login & Data Recovery:</h2>');
+        
+        test('Auto-login with valid stored data', () => {
+            // Simulate stored user
+            localStorage.setItem('werkbuch_user', JSON.stringify({name: 'Test User', class: 'TestClass'}));
+            
+            const result = Auth.checkAutoLogin();
+            if (!result || Auth.currentUser.name !== 'Test User') {
+                throw new Error('Auto-login should succeed with valid stored data');
+            }
+            return true;
+        });
+        
+        test('Auto-login with corrupted data', () => {
+            Auth.currentUser = null;
+            localStorage.setItem('werkbuch_user', 'invalid-json');
+            
+            const result = Auth.checkAutoLogin();
+            if (result !== false || Auth.currentUser !== null) {
+                throw new Error('Auto-login should fail with corrupted data');
+            }
+            return true;
+        });
+        
+        test('Auto-login with incomplete data', () => {
+            Auth.currentUser = null;
+            localStorage.setItem('werkbuch_user', JSON.stringify({name: 'Test'})); // Missing class
+            
+            const result = Auth.checkAutoLogin();
+            if (result !== false || Auth.currentUser !== null) {
+                throw new Error('Auto-login should fail with incomplete data');
+            }
+            return true;
+        });
+        
+        // Test 5: Logout and Cleanup
+        log('<h2>5. Logout & Cleanup:</h2>');
+        
+        test('Complete logout cleanup', () => {
+            // Set up user and some data
+            Auth.login('Kaspar Haessig', '001b26c');
+            localStorage.setItem('werkbuch_test', 'test-data');
+            
+            Auth.logout();
+            
+            if (Auth.currentUser !== null) {
+                throw new Error('Current user should be cleared');
+            }
+            
+            if (localStorage.getItem('werkbuch_user')) {
+                throw new Error('Stored user data should be cleared');
+            }
+            return true;
+        });
+        
+        test('Logout error handling', () => {
+            // Mock storage error
+            const originalClearAll = Storage.clearAll;
+            Storage.clearAll = () => { throw new Error('Storage error'); };
+            
+            Auth.login('Test User', '001b26c');
+            
+            // Should not throw error, but handle gracefully
+            try {
+                Auth.logout();
+                // Should still clear current user even if storage fails
+                if (Auth.currentUser !== null) {
+                    throw new Error('Current user should be cleared even if storage fails');
+                }
+            } finally {
+                Storage.clearAll = originalClearAll;
+            }
+            return true;
+        });
+        
+        // Test 6: Data Integrity
+        log('<h2>6. Data Integrity:</h2>');
+        
+        test('User data validation on retrieval', () => {
+            // Test with various corrupted user data scenarios
+            const testCases = [
+                null,
+                undefined,
+                '',
+                'invalid-string',
+                {name: null},
+                {class: null},
+                {}
+            ];
+            
+            for (const testCase of testCases) {
+                Auth.currentUser = testCase;
+                const user = Auth.getUser();
+                // Should return null or valid user object, never corrupted data
+                if (user !== null && (!user.name || !user.class)) {
+                    throw new Error(`Invalid user data returned for case: ${JSON.stringify(testCase)}`);
+                }
+            }
+            return true;
+        });
+        
+        // Final Results
+        setTimeout(() => {
+            log(`<h2>🎯 Test Results: ${testsPassed}/${testsTotal} tests passed</h2>`);
+            
+            if (testsPassed === testsTotal) {
+                log('<h2 style="color: green">✅ All auth security & stability tests PASSED!</h2>');
+            } else {
+                log(`<h2 style="color: red">❌ ${testsTotal - testsPassed} tests FAILED</h2>`);
+            }
+            
+            // Clean up
+            localStorage.clear();
+            Auth.currentUser = null;
+        }, 100);
+    </script>
+</body>
+</html>

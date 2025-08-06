@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MS-15 Storage Testing</title>
+</head>
+<body>
+    <h1>MS-15 Storage Module Tests</h1>
+    <div id="results"></div>
+
+    <script src="js/storage.js"></script>
+    <script>
+        // MS-15: Storage module comprehensive testing
+        const results = document.getElementById('results');
+        
+        function log(message) {
+            results.innerHTML += message + '<br>';
+            console.log(message);
+        }
+        
+        function runTest(name, testFn) {
+            try {
+                const result = testFn();
+                log(`✅ ${name}: PASS`);
+                return true;
+            } catch (error) {
+                log(`❌ ${name}: FAIL - ${error.message}`);
+                return false;
+            }
+        }
+        
+        log('MS-15 Storage Error Handling Tests:');
+        let testsPassed = 0;
+        let testsTotal = 0;
+        
+        function test(name, fn) {
+            testsTotal++;
+            if (runTest(name, fn)) testsPassed++;
+        }
+        
+        // Clear localStorage for clean tests
+        localStorage.clear();
+        
+        // Test 1: User Operations
+        log('<h2>1. User Data Validation:</h2>');
+        
+        test('Valid user save/load', () => {
+            Storage.saveUser({name: 'Test User', class: 'B26c'});
+            const user = Storage.getUser();
+            if (!user || user.name !== 'Test User') throw new Error('User data not saved/loaded correctly');
+            return true;
+        });
+        
+        test('Invalid user data rejection', () => {
+            try {
+                Storage.saveUser(null);
+                throw new Error('Should have thrown error');
+            } catch (e) {
+                if (e.message.includes('Invalid user data')) return true;
+                throw e;
+            }
+        });
+        
+        test('Corrupted user data handling', () => {
+            localStorage.setItem('werkbuch_user', 'invalid-json');
+            const user = Storage.getUser();
+            if (user !== null) throw new Error('Should return null for corrupted data');
+            return true;
+        });
+        
+        // Test 2: Workbook Operations
+        log('<h2>2. Workbook Data Validation:</h2>');
+        
+        test('Valid workbook save/load', () => {
+            const testData = {inputs: {field1: 'value1'}, canvases: {canvas1: 'data'}};
+            Storage.saveWorkbookData('page1', testData);
+            const loaded = Storage.getWorkbookData('page1');
+            if (!loaded || loaded.inputs.field1 !== 'value1') throw new Error('Workbook data not saved/loaded correctly');
+            return true;
+        });
+        
+        test('Invalid pageId handling', () => {
+            const result = Storage.getWorkbookData('');
+            if (result !== null) throw new Error('Should return null for empty pageId');
+            return true;
+        });
+        
+        test('Invalid workbook data rejection', () => {
+            try {
+                Storage.saveWorkbookData('page1', null);
+                throw new Error('Should have thrown error');
+            } catch (e) {
+                if (e.message.includes('Invalid data object')) return true;
+                throw e;
+            }
+        });
+        
+        // Test 3: Canvas Operations
+        log('<h2>3. Canvas Data Validation:</h2>');
+        
+        test('Valid canvas save/load', () => {
+            Storage.saveCanvasData('page1', 'canvas1', 'data:image/png;base64,test');
+            const loaded = Storage.getCanvasData('page1', 'canvas1');
+            if (!loaded || !loaded.startsWith('data:image/')) throw new Error('Canvas data not saved/loaded correctly');
+            return true;
+        });
+        
+        test('Invalid canvas data rejection', () => {
+            try {
+                Storage.saveCanvasData('page1', 'canvas1', 'invalid-data');
+                throw new Error('Should have thrown error');
+            } catch (e) {
+                if (e.message.includes('Invalid canvas data URL')) return true;
+                throw e;
+            }
+        });
+        
+        test('Invalid canvas IDs handling', () => {
+            const result = Storage.getCanvasData('', '');
+            if (result !== null) throw new Error('Should return null for empty IDs');
+            return true;
+        });
+        
+        // Test 4: Progress Operations
+        log('<h2>4. Progress Data Validation:</h2>');
+        
+        test('Valid progress save/load', () => {
+            const testProgress = {completed: ['topic1'], scores: {topic1: 85}};
+            Storage.saveProgress(testProgress);
+            const loaded = Storage.getProgress();
+            if (!loaded || !loaded.completed.includes('topic1')) throw new Error('Progress data not saved/loaded correctly');
+            return true;
+        });
+        
+        test('Default progress structure', () => {
+            localStorage.removeItem('werkbuch_progress');
+            const progress = Storage.getProgress();
+            if (!Array.isArray(progress.completed) || typeof progress.scores !== 'object') {
+                throw new Error('Default progress structure invalid');
+            }
+            return true;
+        });
+        
+        test('Invalid progress data handling', () => {
+            try {
+                Storage.saveProgress(null);
+                throw new Error('Should have thrown error');
+            } catch (e) {
+                if (e.message.includes('Invalid progress data')) return true;
+                throw e;
+            }
+        });
+        
+        // Test 5: Exam Operations
+        log('<h2>5. Exam Data Validation:</h2>');
+        
+        test('Valid exam save/load', () => {
+            const testExam = {answers: {q1: 'answer1'}, learned: {topic1: true}};
+            Storage.saveExamData(testExam);
+            const loaded = Storage.getExamData();
+            if (!loaded || loaded.answers.q1 !== 'answer1') throw new Error('Exam data not saved/loaded correctly');
+            return true;
+        });
+        
+        test('Default exam structure', () => {
+            localStorage.removeItem('werkbuch_exam');
+            const exam = Storage.getExamData();
+            if (typeof exam.answers !== 'object' || typeof exam.learned !== 'object') {
+                throw new Error('Default exam structure invalid');
+            }
+            return true;
+        });
+        
+        // Test 6: Bulk Operations
+        log('<h2>6. Bulk Operations:</h2>');
+        
+        test('getAllWorkbookData with valid data', () => {
+            Storage.saveWorkbookData('page1', {inputs: {field1: 'value1'}});
+            Storage.saveWorkbookData('page2', {inputs: {field2: 'value2'}});
+            const allData = Storage.getAllWorkbookData();
+            if (!allData.page1 || !allData.page2) throw new Error('Failed to load all workbook data');
+            return true;
+        });
+        
+        test('clearCanvasData for specific page', () => {
+            Storage.saveCanvasData('page1', 'canvas1', 'data:image/png;base64,test1');
+            Storage.saveCanvasData('page1', 'canvas2', 'data:image/png;base64,test2');
+            Storage.saveCanvasData('page2', 'canvas1', 'data:image/png;base64,test3');
+            
+            Storage.clearCanvasData('page1');
+            
+            const canvas1 = Storage.getCanvasData('page1', 'canvas1');
+            const canvas2 = Storage.getCanvasData('page1', 'canvas2');
+            const canvas3 = Storage.getCanvasData('page2', 'canvas1');
+            
+            if (canvas1 !== null || canvas2 !== null) throw new Error('Page1 canvas data not cleared');
+            if (canvas3 === null) throw new Error('Page2 canvas data wrongly cleared');
+            return true;
+        });
+        
+        test('clearAll function', () => {
+            Storage.saveUser({name: 'Test'});
+            Storage.saveProgress({completed: ['test']});
+            Storage.clearAll();
+            
+            const user = Storage.getUser();
+            const progress = Storage.getProgress();
+            
+            if (user !== null) throw new Error('User data not cleared');
+            if (progress.completed.length > 0) throw new Error('Progress data not fully cleared');
+            return true;
+        });
+        
+        // Final Results
+        setTimeout(() => {
+            log(`<h2>🎯 Test Results: ${testsPassed}/${testsTotal} tests passed</h2>`);
+            
+            if (testsPassed === testsTotal) {
+                log('<h2 style="color: green">✅ All storage error handling tests PASSED!</h2>');
+            } else {
+                log(`<h2 style="color: red">❌ ${testsTotal - testsPassed} tests FAILED</h2>`);
+            }
+        }, 100);
+    </script>
+</body>
+</html>

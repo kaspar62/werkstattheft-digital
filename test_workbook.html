@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MS-15 Workbook Testing</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>MS-15 Workbook Module Tests</h1>
+    <div id="results"></div>
+    
+    <!-- Mock DOM structure for testing -->
+    <div style="display: none;">
+        <ul id="topicList"></ul>
+        <div id="workbookContent"></div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/workbook.js"></script>
+    <script>
+        // MS-15: Workbook module comprehensive testing
+        const results = document.getElementById('results');
+        
+        function log(message) {
+            results.innerHTML += message + '<br>';
+            console.log(message);
+        }
+        
+        function runTest(name, testFn) {
+            try {
+                const result = testFn();
+                log(`✅ ${name}: PASS`);
+                return true;
+            } catch (error) {
+                log(`❌ ${name}: FAIL - ${error.message}`);
+                return false;
+            }
+        }
+        
+        log('MS-15 Workbook Module Functionality Tests:');
+        let testsPassed = 0;
+        let testsTotal = 0;
+        
+        function test(name, fn) {
+            testsTotal++;
+            if (runTest(name, fn)) testsPassed++;
+        }
+        
+        // Clear localStorage for clean tests
+        localStorage.clear();
+        
+        // Test 1: Data Structure Integrity
+        log('<h2>1. Data Structure & Content Validation:</h2>');
+        
+        test('Topics array properly initialized', () => {
+            if (!Array.isArray(Workbook.topics) || Workbook.topics.length === 0) {
+                throw new Error('Topics array missing or empty');
+            }
+            if (Workbook.topics.length < 10) {
+                throw new Error(`Expected at least 10 topics, got ${Workbook.topics.length}`);
+            }
+            return true;
+        });
+        
+        test('All topics have required properties', () => {
+            const requiredProps = ['id', 'title', 'category', 'pages'];
+            for (const topic of Workbook.topics) {
+                for (const prop of requiredProps) {
+                    if (!(prop in topic)) {
+                        throw new Error(`Topic ${topic.id || 'unknown'} missing property: ${prop}`);
+                    }
+                }
+                if (!Array.isArray(topic.pages) || topic.pages.length === 0) {
+                    throw new Error(`Topic ${topic.id} has invalid pages array`);
+                }
+            }
+            return true;
+        });
+        
+        test('All pages have required properties', () => {
+            const requiredProps = ['id', 'title', 'type'];
+            for (const topic of Workbook.topics) {
+                for (const page of topic.pages) {
+                    for (const prop of requiredProps) {
+                        if (!(prop in page)) {
+                            throw new Error(`Page ${page.id || 'unknown'} in topic ${topic.id} missing property: ${prop}`);
+                        }
+                    }
+                }
+            }
+            return true;
+        });
+        
+        test('Input field validation', () => {
+            let pagesWithInputs = 0;
+            let totalInputs = 0;
+            
+            for (const topic of Workbook.topics) {
+                for (const page of topic.pages) {
+                    // Check direct inputs
+                    if (page.inputs && Array.isArray(page.inputs)) {
+                        pagesWithInputs++;
+                        totalInputs += page.inputs.length;
+                        
+                        for (const input of page.inputs) {
+                            if (!input.type || !input.placeholder) {
+                                throw new Error(`Invalid input in page ${page.id}: missing type or placeholder`);
+                            }
+                            if (typeof input.maxLength !== 'number') {
+                                throw new Error(`Invalid maxLength in page ${page.id}`);
+                            }
+                        }
+                    }
+                    
+                    // Check question inputs
+                    if (page.questions && Array.isArray(page.questions)) {
+                        for (const question of page.questions) {
+                            if (!question.question || !Array.isArray(question.inputs)) {
+                                throw new Error(`Invalid question structure in page ${page.id}`);
+                            }
+                            
+                            totalInputs += question.inputs.length;
+                            for (const input of question.inputs) {
+                                if (!input.type || !input.placeholder) {
+                                    throw new Error(`Invalid question input in page ${page.id}: missing type or placeholder`);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (totalInputs < 100) {
+                throw new Error(`Expected at least 100 input fields, found ${totalInputs}`);
+            }
+            
+            log(`Found ${pagesWithInputs} pages with inputs, ${totalInputs} total inputs`);
+            return true;
+        });
+        
+        // Test 2: Category Structure
+        log('<h2>2. Category & Organization Tests:</h2>');
+        
+        test('Categories properly defined', () => {
+            const expectedCategories = ['Grundlagen', 'Werkzeuge', 'Techniken', 'Verbindungen', 'Materialien'];
+            const foundCategories = [...new Set(Workbook.topics.map(t => t.category))];
+            
+            for (const expected of expectedCategories) {
+                if (!foundCategories.includes(expected)) {
+                    throw new Error(`Missing expected category: ${expected}`);
+                }
+            }
+            
+            return true;
+        });
+        
+        test('Category distribution reasonable', () => {
+            const categoryCount = {};
+            Workbook.topics.forEach(topic => {
+                categoryCount[topic.category] = (categoryCount[topic.category] || 0) + 1;
+            });
+            
+            // Each category should have at least 1 topic
+            for (const [category, count] of Object.entries(categoryCount)) {
+                if (count === 0) {
+                    throw new Error(`Category ${category} has no topics`);
+                }
+            }
+            
+            log(`Category distribution: ${JSON.stringify(categoryCount)}`);
+            return true;
+        });
+        
+        // Test 3: Menu Functionality
+        log('<h2>3. Menu Generation & Navigation:</h2>');
+        
+        test('Menu initialization', () => {
+            // Clear the list first
+            document.getElementById('topicList').innerHTML = '';
+            
+            Workbook.initMenu();
+            
+            const topicList = document.getElementById('topicList');
+            const items = topicList.children;
+            
+            if (items.length === 0) {
+                throw new Error('Menu not generated');
+            }
+            
+            // Check for category headers and topic items
+            let categoryHeaders = 0;
+            let topicItems = 0;
+            
+            for (const item of items) {
+                if (item.classList.contains('category-header')) {
+                    categoryHeaders++;
+                } else if (item.classList.contains('topic-item')) {
+                    topicItems++;
+                }
+            }
+            
+            if (categoryHeaders === 0) {
+                throw new Error('No category headers generated');
+            }
+            if (topicItems !== Workbook.topics.length) {
+                throw new Error(`Expected ${Workbook.topics.length} topic items, got ${topicItems}`);
+            }
+            
+            log(`Generated ${categoryHeaders} category headers, ${topicItems} topic items`);
+            return true;
+        });
+        
+        test('Topic loading functionality', () => {
+            const firstTopic = Workbook.topics[0];
+            Workbook.loadTopic(firstTopic.id);
+            
+            if (Workbook.currentTopic !== firstTopic) {
+                throw new Error('Topic not loaded correctly');
+            }
+            
+            // Check if content was rendered
+            const content = document.getElementById('workbookContent');
+            if (!content.innerHTML.includes(firstTopic.title)) {
+                throw new Error('Topic content not rendered');
+            }
+            
+            return true;
+        });
+        
+        // Test 4: Page Finding & Loading
+        log('<h2>4. Page Management Tests:</h2>');
+        
+        test('Page finding by ID', () => {
+            const testPageId = 'werkstatt-1';
+            const page = Workbook.findPageById(testPageId);
+            
+            if (!page) {
+                throw new Error(`Page ${testPageId} not found`);
+            }
+            if (page.id !== testPageId) {
+                throw new Error('Wrong page returned');
+            }
+            if (!page.topicId) {
+                throw new Error('topicId not set on found page');
+            }
+            
+            return true;
+        });
+        
+        test('Invalid page ID handling', () => {
+            const invalidPage = Workbook.findPageById('nonexistent-page');
+            if (invalidPage !== null) {
+                throw new Error('Should return null for invalid page ID');
+            }
+            return true;
+        });
+        
+        test('Page loading and rendering', () => {
+            const testPageId = 'werkstatt-2'; // Page with questions
+            const page = Workbook.findPageById(testPageId);
+            
+            Workbook.loadPage(testPageId);
+            
+            if (Workbook.currentPage !== page) {
+                throw new Error('Page not loaded correctly');
+            }
+            
+            // Check if content was rendered with questions
+            const content = document.getElementById('workbookContent');
+            if (!content.innerHTML.includes('question-group')) {
+                throw new Error('Page questions not rendered');
+            }
+            
+            return true;
+        });
+        
+        // Test 5: Drawing Areas Creation
+        log('<h2>5. Drawing Areas & Canvas Tests:</h2>');
+        
+        test('Drawing areas creation for werkstatt-1', () => {
+            const page = Workbook.findPageById('werkstatt-1');
+            const drawingHTML = Workbook.createDrawingAreas(page);
+            
+            if (!drawingHTML.includes('name-canvas-container')) {
+                throw new Error('Name canvas area not created');
+            }
+            if (!drawingHTML.includes('class-canvas-container')) {
+                throw new Error('Class canvas area not created');
+            }
+            
+            return true;
+        });
+        
+        test('Drawing areas creation for material-1', () => {
+            const page = Workbook.findPageById('material-1');
+            const drawingHTML = Workbook.createDrawingAreas(page);
+            
+            if (!drawingHTML.includes('stoss-canvas-container')) {
+                throw new Error('Stoss canvas area not created');
+            }
+            if (!drawingHTML.includes('gehrung-canvas-container')) {
+                throw new Error('Gehrung canvas area not created');
+            }
+            
+            return true;
+        });
+        
+        test('No drawing areas for non-drawing pages', () => {
+            const page = Workbook.findPageById('sicherheit-1');
+            const drawingHTML = Workbook.createDrawingAreas(page);
+            
+            if (drawingHTML !== '') {
+                throw new Error('Should not create drawing areas for non-drawing pages');
+            }
+            
+            return true;
+        });
+        
+        // Test 6: Data Persistence  
+        log('<h2>6. Data Persistence Tests:</h2>');
+        
+        test('Save page data structure', () => {
+            // Mock a page with current data
+            const testPage = { id: 'test-page', title: 'Test Page' };
+            Workbook.currentPage = testPage;
+            
+            // Mock input fields in DOM
+            const content = document.getElementById('workbookContent');
+            content.innerHTML = `
+                <input type="text" class="workbook-input" value="test-value-1">
+                <input type="text" class="workbook-input" value="test-value-2">
+                <textarea class="workbook-textarea">test-textarea</textarea>
+            `;
+            
+            // Mock Drawing module
+            const mockDrawing = {
+                canvasInstances: new Map(),
+                getCanvasData: () => null
+            };
+            window.Drawing = mockDrawing;
+            
+            // Should not throw error
+            Workbook.savePage();
+            
+            // Verify data was saved
+            const savedData = Storage.getWorkbookData('test-page');
+            if (!savedData) {
+                throw new Error('Page data not saved');
+            }
+            
+            if (!savedData.inputs || !savedData.timestamp) {
+                throw new Error('Invalid saved data structure');
+            }
+            
+            if (savedData.inputs.input_0 !== 'test-value-1') {
+                throw new Error('Input values not saved correctly');
+            }
+            
+            return true;
+        });
+        
+        test('Load page data restoration', () => {
+            // Save test data first
+            const testData = {
+                timestamp: new Date().toISOString(),
+                inputs: {
+                    input_0: 'restored-value-1',
+                    input_1: 'restored-value-2'
+                },
+                canvases: {}
+            };
+            Storage.saveWorkbookData('load-test-page', testData);
+            
+            // Create mock input fields
+            const content = document.getElementById('workbookContent');
+            content.innerHTML = `
+                <input type="text" class="workbook-input" value="">
+                <input type="text" class="workbook-input" value="">
+            `;
+            
+            // Load the data
+            Workbook.loadPageData('load-test-page');
+            
+            // Verify restoration
+            const inputs = document.querySelectorAll('.workbook-input');
+            if (inputs[0].value !== 'restored-value-1') {
+                throw new Error('First input not restored correctly');
+            }
+            if (inputs[1].value !== 'restored-value-2') {
+                throw new Error('Second input not restored correctly');
+            }
+            
+            return true;
+        });
+        
+        // Test 7: Error Handling & Edge Cases
+        log('<h2>7. Error Handling & Edge Cases:</h2>');
+        
+        test('Invalid topic ID handling', () => {
+            const originalTopic = Workbook.currentTopic;
+            
+            // Should not throw error or change current topic
+            Workbook.loadTopic('nonexistent-topic');
+            
+            if (Workbook.currentTopic !== originalTopic) {
+                throw new Error('Current topic changed for invalid topic ID');
+            }
+            
+            return true;
+        });
+        
+        test('Save without current page', () => {
+            const originalPage = Workbook.currentPage;
+            Workbook.currentPage = null;
+            
+            // Should not throw error
+            try {
+                Workbook.savePage();
+            } catch (error) {
+                throw new Error('savePage threw error when no current page');
+            } finally {
+                Workbook.currentPage = originalPage;
+            }
+            
+            return true;
+        });
+        
+        test('Load data for nonexistent page', () => {
+            // Should not throw error
+            try {
+                Workbook.loadPageData('nonexistent-page-id');
+            } catch (error) {
+                throw new Error('loadPageData threw error for nonexistent page');
+            }
+            
+            return true;
+        });
+        
+        test('Drawing area creation with null page', () => {
+            const result = Workbook.createDrawingAreas(null);
+            if (result !== '') {
+                throw new Error('Should return empty string for null page');
+            }
+            
+            const result2 = Workbook.createDrawingAreas({});
+            if (result2 !== '') {
+                throw new Error('Should return empty string for page without ID');
+            }
+            
+            return true;
+        });
+        
+        // Test 8: Content Validation
+        log('<h2>8. Content Quality & Completeness:</h2>');
+        
+        test('Essential pages present', () => {
+            const essentialPages = [
+                'werkstatt-1', 'werkstatt-2', 'werkstatt-3',
+                'sicherheit-1', 
+                'material-1', 'material-2',
+                'zangen-1', 'zangen-2'
+            ];
+            
+            for (const pageId of essentialPages) {
+                const page = Workbook.findPageById(pageId);
+                if (!page) {
+                    throw new Error(`Essential page ${pageId} not found`);
+                }
+            }
+            
+            return true;
+        });
+        
+        test('Input field distribution', () => {
+            let textInputs = 0;
+            let textareas = 0;
+            
+            for (const topic of Workbook.topics) {
+                for (const page of topic.pages) {
+                    // Count direct inputs
+                    if (page.inputs) {
+                        for (const input of page.inputs) {
+                            if (input.type === 'textarea') textareas++;
+                            else textInputs++;
+                        }
+                    }
+                    
+                    // Count question inputs
+                    if (page.questions) {
+                        for (const question of page.questions) {
+                            for (const input of question.inputs) {
+                                if (input.type === 'textarea') textareas++;
+                                else textInputs++;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (textInputs < 80) {
+                throw new Error(`Expected at least 80 text inputs, got ${textInputs}`);
+            }
+            if (textareas < 10) {
+                throw new Error(`Expected at least 10 textareas, got ${textareas}`);
+            }
+            
+            log(`Found ${textInputs} text inputs and ${textareas} textareas`);
+            return true;
+        });
+        
+        // Final Results
+        setTimeout(() => {
+            log(`<h2>🎯 Test Results: ${testsPassed}/${testsTotal} tests passed</h2>`);
+            
+            if (testsPassed === testsTotal) {
+                log('<h2 style="color: green">✅ All workbook functionality tests PASSED!</h2>');
+            } else {
+                log(`<h2 style="color: red">❌ ${testsTotal - testsPassed} tests FAILED</h2>`);
+            }
+            
+            // Clean up
+            localStorage.clear();
+            Workbook.currentTopic = null;
+            Workbook.currentPage = null;
+        }, 100);
+    </script>
+</body>
+</html>

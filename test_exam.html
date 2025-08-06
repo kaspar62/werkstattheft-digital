@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MS-15 Exam Testing</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>MS-15 Exam Module Tests</h1>
+    <div id="results"></div>
+    
+    <!-- Mock DOM structure for testing -->
+    <div style="display: none;">
+        <div id="examContent"></div>
+        <div id="questionArea" class="question-area">
+            <div class="question-header">
+                <span id="questionCounter"></span>
+                <span id="questionTopic" class="question-topic"></span>
+            </div>
+            <div id="questionText" class="question-text"></div>
+            <textarea id="examAnswer" class="exam-input"></textarea>
+            <div id="feedback" class="feedback"></div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/workbook.js"></script>
+    <script src="js/claude-api.js"></script>
+    <script src="js/exam.js"></script>
+    <script>
+        // MS-15: Exam module comprehensive testing
+        const results = document.getElementById('results');
+        
+        function log(message) {
+            results.innerHTML += message + '<br>';
+            console.log(message);
+        }
+        
+        function runTest(name, testFn) {
+            try {
+                const result = testFn();
+                log(`✅ ${name}: PASS`);
+                return true;
+            } catch (error) {
+                log(`❌ ${name}: FAIL - ${error.message}`);
+                return false;
+            }
+        }
+        
+        log('MS-15 Exam Module KI-Integration & Question Tests:');
+        let testsPassed = 0;
+        let testsTotal = 0;
+        
+        function test(name, fn) {
+            testsTotal++;
+            if (runTest(name, fn)) testsPassed++;
+        }
+        
+        // Setup test data
+        localStorage.clear();
+        
+        // Test 1: Exam Module Initialization
+        log('<h2>1. Exam Module Initialization:</h2>');
+        
+        test('Exam initialization without errors', () => {
+            // Should not throw error
+            try {
+                Exam.init();
+            } catch (error) {
+                throw new Error('Exam init failed: ' + error.message);
+            }
+            
+            if (!Exam.examData) {
+                throw new Error('Exam data not initialized');
+            }
+            
+            if (!Array.isArray(Exam.availableQuestions)) {
+                throw new Error('Available questions not initialized as array');
+            }
+            
+            return true;
+        });
+        
+        test('Question pool building with empty workbook', () => {
+            // With no workbook data, should have 0 questions
+            Exam.buildQuestionPool();
+            
+            if (Exam.availableQuestions.length !== 0) {
+                throw new Error('Should have no questions with empty workbook');
+            }
+            
+            return true;
+        });
+        
+        // Test 2: Question Generation from Workbook Data
+        log('<h2>2. Question Generation from Workbook:</h2>');
+        
+        test('Question extraction from page data', () => {
+            // Create mock workbook data
+            const mockPageData = {
+                timestamp: new Date().toISOString(),
+                inputs: {
+                    input_0: 'Augenschutz tragen',
+                    input_1: 'Gehörschutz verwenden',
+                    input_2: 'Lange Haare zusammenbinden'
+                },
+                canvases: {}
+            };
+            
+            Storage.saveWorkbookData('sicherheit-1', mockPageData);
+            
+            // Rebuild question pool
+            Exam.buildQuestionPool();
+            
+            if (Exam.availableQuestions.length === 0) {
+                throw new Error('No questions generated from mock data');
+            }
+            
+            const question = Exam.availableQuestions[0];
+            if (!question.id || !question.question || !question.correctAnswer) {
+                throw new Error('Generated question missing required properties');
+            }
+            
+            if (question.correctAnswer !== 'Augenschutz tragen') {
+                throw new Error('Question answer not extracted correctly');
+            }
+            
+            log(`Generated ${Exam.availableQuestions.length} questions from test data`);
+            return true;
+        });
+        
+        test('Question filtering for minimum length', () => {
+            // Add data with too short answer
+            const mockPageData = {
+                timestamp: new Date().toISOString(),
+                inputs: {
+                    input_0: 'ab',  // Too short
+                    input_1: 'This is a proper answer',  // Good length
+                    input_2: ''  // Empty
+                },
+                canvases: {}
+            };
+            
+            Storage.saveWorkbookData('test-page', mockPageData);
+            Exam.buildQuestionPool();
+            
+            // Should only include questions with answers >= 3 characters
+            const shortAnswers = Exam.availableQuestions.filter(q => q.correctAnswer.length < 3);
+            if (shortAnswers.length > 0) {
+                throw new Error('Questions with too short answers were included');
+            }
+            
+            return true;
+        });
+        
+        test('Page finding functionality', () => {
+            const page = Exam.findPageById('sicherheit-1');
+            
+            if (!page) {
+                throw new Error('Could not find existing page');
+            }
+            
+            if (page.id !== 'sicherheit-1') {
+                throw new Error('Wrong page returned');
+            }
+            
+            if (!page.topicTitle) {
+                throw new Error('Topic title not added to page');
+            }
+            
+            const invalidPage = Exam.findPageById('nonexistent-page');
+            if (invalidPage !== null) {
+                throw new Error('Should return null for invalid page ID');
+            }
+            
+            return true;
+        });
+        
+        // Test 3: Question Display and Navigation
+        log('<h2>3. Question Display & Navigation:</h2>');
+        
+        test('Exam content display with no questions', () => {
+            // Clear questions
+            Exam.availableQuestions = [];
+            Exam.showExamContent();
+            
+            const content = document.getElementById('examContent');
+            if (!content.innerHTML.includes('keine Fragen verfügbar')) {
+                throw new Error('No questions message not displayed');
+            }
+            
+            return true;
+        });
+        
+        test('Exam content display with questions', () => {
+            // Ensure we have questions
+            Exam.buildQuestionPool();
+            
+            if (Exam.availableQuestions.length === 0) {
+                throw new Error('Need questions for this test - run question generation test first');
+            }
+            
+            Exam.showExamContent();
+            
+            const content = document.getElementById('examContent');
+            if (!content.innerHTML.includes('Zufällige Prüfung starten')) {
+                throw new Error('Start exam button not displayed');
+            }
+            
+            if (!content.innerHTML.includes(Exam.availableQuestions.length + ' Fragen')) {
+                throw new Error('Question count not displayed');
+            }
+            
+            return true;
+        });
+        
+        test('Random exam start and question display', () => {
+            if (Exam.availableQuestions.length === 0) {
+                throw new Error('Need questions for this test');
+            }
+            
+            Exam.startRandomExam();
+            
+            if (!Exam.currentQuestion) {
+                throw new Error('Current question not set');
+            }
+            
+            if (typeof Exam.currentQuestionIndex !== 'number' || Exam.currentQuestionIndex < 0) {
+                throw new Error('Question index not set correctly');
+            }
+            
+            const questionArea = document.getElementById('questionArea');
+            if (questionArea.style.display === 'none') {
+                throw new Error('Question area not displayed');
+            }
+            
+            const questionText = document.getElementById('questionText');
+            if (!questionText.textContent) {
+                throw new Error('Question text not displayed');
+            }
+            
+            return true;
+        });
+        
+        test('Question navigation functionality', () => {
+            const originalQuestion = Exam.currentQuestion;
+            
+            Exam.nextQuestion();
+            
+            if (!Exam.currentQuestion) {
+                throw new Error('Next question not loaded');
+            }
+            
+            // With random selection, might get same question - just check it's valid
+            if (!Exam.currentQuestion.id || !Exam.currentQuestion.question) {
+                throw new Error('Next question data invalid');
+            }
+            
+            return true;
+        });
+        
+        // Test 4: Answer Checking & Evaluation
+        log('<h2>4. Answer Checking & Evaluation:</h2>');
+        
+        test('Local answer comparison exact match', () => {
+            const correct = Exam.compareAnswers('Augenschutz tragen', 'Augenschutz tragen');
+            if (!correct) {
+                throw new Error('Exact match not recognized as correct');
+            }
+            
+            const incorrect = Exam.compareAnswers('Wrong answer', 'Correct answer');
+            if (incorrect) {
+                throw new Error('Different answers incorrectly marked as correct');
+            }
+            
+            return true;
+        });
+        
+        test('Local answer comparison case insensitive', () => {
+            const correct = Exam.compareAnswers('AUGENSCHUTZ TRAGEN', 'augenschutz tragen');
+            if (!correct) {
+                throw new Error('Case-insensitive match not working');
+            }
+            
+            return true;
+        });
+        
+        test('Local answer comparison substring matching', () => {
+            const correct1 = Exam.compareAnswers('Schutz', 'Augenschutz tragen');
+            if (!correct1) {
+                throw new Error('Substring matching not working (user in correct)');
+            }
+            
+            const correct2 = Exam.compareAnswers('Augenschutz tragen verwenden', 'Augenschutz tragen');
+            if (!correct2) {
+                throw new Error('Substring matching not working (correct in user)');
+            }
+            
+            const incorrect = Exam.compareAnswers('ab', 'Much longer correct answer');
+            if (incorrect) {
+                throw new Error('Too short substring incorrectly marked as correct');
+            }
+            
+            return true;
+        });
+        
+        test('Hint generation functionality', () => {
+            if (!Exam.currentQuestion) {
+                Exam.startRandomExam();
+            }
+            
+            Exam.showHint();
+            
+            const feedback = document.getElementById('feedback');
+            if (!feedback.innerHTML.includes('Hinweis:')) {
+                throw new Error('Hint not displayed');
+            }
+            
+            if (!feedback.innerHTML.includes('Beginnt mit')) {
+                throw new Error('Hint format incorrect');
+            }
+            
+            return true;
+        });
+        
+        // Test 5: Learning Progress Tracking
+        log('<h2>5. Learning Progress Tracking:</h2>');
+        
+        test('Learning progress initialization', () => {
+            const testQuestionId = 'test_question_1';
+            
+            // First attempt
+            Exam.updateLearningProgress(testQuestionId, true);
+            
+            const examData = Storage.getExamData();
+            const questionData = examData.learned[testQuestionId];
+            
+            if (!questionData) {
+                throw new Error('Question progress data not created');
+            }
+            
+            if (questionData.correct !== 1 || questionData.attempts !== 1) {
+                throw new Error('Progress counts not updated correctly');
+            }
+            
+            if (questionData.correctStreak !== 1) {
+                throw new Error('Correct streak not tracked');
+            }
+            
+            return true;
+        });
+        
+        test('3x correct mastery rule', () => {
+            const testQuestionId = 'test_question_mastery';
+            
+            // First two correct answers
+            Exam.updateLearningProgress(testQuestionId, true);
+            Exam.updateLearningProgress(testQuestionId, true);
+            
+            let examData = Storage.getExamData();
+            let questionData = examData.learned[testQuestionId];
+            
+            if (questionData.mastered === true) {
+                throw new Error('Question should not be mastered after only 2 correct');
+            }
+            
+            // Third correct answer
+            Exam.updateLearningProgress(testQuestionId, true);
+            
+            examData = Storage.getExamData();
+            questionData = examData.learned[testQuestionId];
+            
+            if (questionData.mastered !== true) {
+                throw new Error('Question should be mastered after 3 correct');
+            }
+            
+            if (questionData.correctStreak !== 3) {
+                throw new Error('Correct streak not maintained');
+            }
+            
+            return true;
+        });
+        
+        test('Correct streak reset on wrong answer', () => {
+            const testQuestionId = 'test_question_reset';
+            
+            // Two correct answers
+            Exam.updateLearningProgress(testQuestionId, true);
+            Exam.updateLearningProgress(testQuestionId, true);
+            
+            // One wrong answer
+            Exam.updateLearningProgress(testQuestionId, false);
+            
+            const examData = Storage.getExamData();
+            const questionData = examData.learned[testQuestionId];
+            
+            if (questionData.correctStreak !== 0) {
+                throw new Error('Correct streak not reset after wrong answer');
+            }
+            
+            if (questionData.mastered === true) {
+                throw new Error('Question should not be mastered after wrong answer');
+            }
+            
+            return true;
+        });
+        
+        // Test 6: Claude API Integration
+        log('<h2>6. Claude API Integration:</h2>');
+        
+        test('ClaudeAPI module initialization', () => {
+            if (typeof ClaudeAPI !== 'object') {
+                throw new Error('ClaudeAPI module not available');
+            }
+            
+            // Should not throw error
+            ClaudeAPI.init();
+            
+            const status = ClaudeAPI.getStatus();
+            if (!status || typeof status.configured !== 'boolean') {
+                throw new Error('API status not properly returned');
+            }
+            
+            return true;
+        });
+        
+        test('API fallback evaluation functionality', () => {
+            const evaluation = ClaudeAPI.fallbackEvaluation('test answer', 'test answer');
+            
+            if (!evaluation.isCorrect) {
+                throw new Error('Fallback evaluation failed for correct answer');
+            }
+            
+            if (evaluation.method !== 'local-fallback') {
+                throw new Error('Fallback method not identified correctly');
+            }
+            
+            if (!evaluation.explanation || !evaluation.userAnswer || !evaluation.correctAnswer) {
+                throw new Error('Fallback evaluation missing required fields');
+            }
+            
+            return true;
+        });
+        
+        test('Evaluation prompt building', () => {
+            const prompt = ClaudeAPI.buildEvaluationPrompt(
+                'User answer', 
+                'Correct answer', 
+                'Test question'
+            );
+            
+            if (!prompt.includes('User answer') || !prompt.includes('Correct answer')) {
+                throw new Error('Prompt does not include provided answers');
+            }
+            
+            if (!prompt.includes('Test question')) {
+                throw new Error('Prompt does not include question text');
+            }
+            
+            if (!prompt.includes('BEWERTUNG:') || !prompt.includes('BEGRÜNDUNG:')) {
+                throw new Error('Prompt missing expected response format');
+            }
+            
+            return true;
+        });
+        
+        test('Response parsing functionality', () => {
+            const mockApiResponse = `BEWERTUNG: richtig
+BEGRÜNDUNG: Die Antwort ist korrekt und vollständig.`;
+            
+            const parsed = ClaudeAPI.parseEvaluationResponse(
+                mockApiResponse, 
+                'user answer', 
+                'correct answer'
+            );
+            
+            if (!parsed.isCorrect) {
+                throw new Error('Correct evaluation not parsed properly');
+            }
+            
+            if (!parsed.explanation.includes('korrekt')) {
+                throw new Error('Explanation not parsed correctly');
+            }
+            
+            if (parsed.method !== 'claude-api') {
+                throw new Error('Method not set correctly');
+            }
+            
+            return true;
+        });
+        
+        test('Malformed response handling', () => {
+            const malformedResponse = 'This is not the expected format';
+            
+            const parsed = ClaudeAPI.parseEvaluationResponse(
+                malformedResponse, 
+                'user answer', 
+                'correct answer'
+            );
+            
+            // Should fall back to local evaluation
+            if (parsed.method !== 'local-fallback') {
+                throw new Error('Should fall back for malformed response');
+            }
+            
+            return true;
+        });
+        
+        // Test 7: Error Handling & Edge Cases
+        log('<h2>7. Error Handling & Edge Cases:</h2>');
+        
+        test('Exam operations without current question', () => {
+            Exam.currentQuestion = null;
+            
+            // These should not throw errors
+            try {
+                Exam.showCurrentQuestion();
+                Exam.showHint();
+                
+                // Next question should work if available questions exist
+                if (Exam.availableQuestions.length > 0) {
+                    Exam.nextQuestion();
+                }
+            } catch (error) {
+                throw new Error('Operations failed without current question: ' + error.message);
+            }
+            
+            return true;
+        });
+        
+        test('Empty answer handling', () => {
+            if (Exam.availableQuestions.length === 0) {
+                // Create a test question
+                Exam.availableQuestions.push({
+                    id: 'test_empty',
+                    question: 'Test question',
+                    correctAnswer: 'Test answer'
+                });
+            }
+            
+            Exam.startRandomExam();
+            
+            // Set empty answer
+            document.getElementById('examAnswer').value = '';
+            
+            // Should handle empty answer gracefully (likely show alert)
+            // This is an async operation but we can test that it doesn't throw
+            try {
+                const checkPromise = Exam.checkAnswer();
+                // If it returns a promise, it's async - that's fine
+            } catch (error) {
+                throw new Error('Check answer failed with empty input: ' + error.message);
+            }
+            
+            return true;
+        });
+        
+        test('Invalid page data handling', () => {
+            // Save invalid workbook data
+            const invalidPageData = {
+                timestamp: new Date().toISOString(),
+                inputs: null,  // Invalid inputs
+                canvases: {}
+            };
+            
+            Storage.saveWorkbookData('invalid-page', invalidPageData);
+            
+            // Should not throw error when building question pool
+            try {
+                Exam.buildQuestionPool();
+            } catch (error) {
+                throw new Error('Question pool building failed with invalid data: ' + error.message);
+            }
+            
+            return true;
+        });
+        
+        test('Exam with no available questions', () => {
+            // Clear all questions
+            Exam.availableQuestions = [];
+            
+            // These should handle gracefully
+            try {
+                Exam.startRandomExam();
+                Exam.nextQuestion();
+            } catch (error) {
+                throw new Error('Operations failed with no questions: ' + error.message);
+            }
+            
+            return true;
+        });
+        
+        // Final Results
+        setTimeout(() => {
+            log(`<h2>🎯 Test Results: ${testsPassed}/${testsTotal} tests passed</h2>`);
+            
+            if (testsPassed === testsTotal) {
+                log('<h2 style="color: green">✅ All exam module tests PASSED!</h2>');
+                log('<p>📚 Question generation from workbook data working</p>');
+                log('<p>🎲 Random question selection and navigation functional</p>');
+                log('<p>✅ Answer checking and evaluation system operational</p>');
+                log('<p>📈 Learning progress tracking with 3x mastery rule working</p>');
+                log('<p>🤖 Claude API integration with fallback properly implemented</p>');
+                log('<p>🛡️ Error handling for edge cases robust</p>');
+            } else {
+                log(`<h2 style="color: red">❌ ${testsTotal - testsPassed} tests FAILED</h2>`);
+            }
+            
+            // Clean up
+            localStorage.clear();
+            Exam.currentQuestion = null;
+            Exam.currentQuestionIndex = 0;
+            Exam.availableQuestions = [];
+        }, 100);
+    </script>
+</body>
+</html>

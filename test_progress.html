@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MS-15 Progress Testing</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>MS-15 Progress Module Tests</h1>
+    <div id="results"></div>
+    
+    <!-- Mock DOM structure for testing -->
+    <div style="display: none;">
+        <div id="progressFill"></div>
+        <div id="progressText"></div>
+        <div id="progressDetails"></div>
+        <div id="statsContent"></div>
+        <div id="progressContent"></div>
+        <section id="progressSection"></section>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/workbook.js"></script>
+    <script src="js/progress.js"></script>
+    <script>
+        // MS-15: Progress module comprehensive testing
+        const results = document.getElementById('results');
+        
+        function log(message) {
+            results.innerHTML += message + '<br>';
+            console.log(message);
+        }
+        
+        function runTest(name, testFn) {
+            try {
+                const result = testFn();
+                log(`✅ ${name}: PASS`);
+                return true;
+            } catch (error) {
+                log(`❌ ${name}: FAIL - ${error.message}`);
+                return false;
+            }
+        }
+        
+        log('MS-15 Progress Module Analytics & Statistics Tests:');
+        let testsPassed = 0;
+        let testsTotal = 0;
+        
+        function test(name, fn) {
+            testsTotal++;
+            if (runTest(name, fn)) testsPassed++;
+        }
+        
+        // Setup test data
+        localStorage.clear();
+        
+        // Test 1: Progress Module Initialization
+        log('<h2>1. Progress Module Initialization:</h2>');
+        
+        test('Progress initialization', () => {
+            Progress.init();
+            
+            if (!Progress.progressData) {
+                throw new Error('Progress data not initialized');
+            }
+            
+            if (!Array.isArray(Progress.progressData.completed)) {
+                throw new Error('Completed array not initialized');
+            }
+            
+            if (typeof Progress.progressData.scores !== 'object') {
+                throw new Error('Scores object not initialized');
+            }
+            
+            return true;
+        });
+        
+        // Test 2: Basic Progress Calculations
+        log('<h2>2. Basic Progress Calculations:</h2>');
+        
+        test('Progress calculation with no data', () => {
+            // Clear all data
+            localStorage.clear();
+            Progress.init();
+            
+            // Should not throw error and return 0%
+            Progress.updateDisplay();
+            
+            const progressText = document.getElementById('progressText');
+            if (!progressText.textContent.includes('0 von')) {
+                throw new Error('Zero progress not displayed correctly');
+            }
+            
+            return true;
+        });
+        
+        test('Progress calculation with sample data', () => {
+            // Create sample workbook data
+            const mockPageData1 = {
+                timestamp: new Date().toISOString(),
+                inputs: { input_0: 'Test answer 1' },
+                canvases: {}
+            };
+            const mockPageData2 = {
+                timestamp: new Date().toISOString(), 
+                inputs: { input_0: 'Test answer 2' },
+                canvases: {}
+            };
+            
+            Storage.saveWorkbookData('werkstatt-1', mockPageData1);
+            Storage.saveWorkbookData('sicherheit-1', mockPageData2);
+            
+            Progress.updateDisplay();
+            
+            const progressText = document.getElementById('progressText');
+            if (!progressText.textContent.includes('2 von')) {
+                throw new Error('Progress count not calculated correctly');
+            }
+            
+            const progressFill = document.getElementById('progressFill');
+            if (!progressFill.style.width || progressFill.style.width === '0%') {
+                throw new Error('Progress fill not updated');
+            }
+            
+            return true;
+        });
+        
+        test('Percentage calculation accuracy', () => {
+            // Get total pages count from Workbook
+            let totalPages = 0;
+            Workbook.topics.forEach(topic => {
+                totalPages += topic.pages.length;
+            });
+            
+            // If we have 2 completed pages, calculate expected percentage
+            const expectedPercentage = totalPages > 0 ? Math.round((2 / totalPages) * 100) : 0;
+            
+            const progressText = document.getElementById('progressText');
+            if (!progressText.textContent.includes(`(${expectedPercentage}%)`)) {
+                throw new Error(`Percentage calculation wrong, expected ${expectedPercentage}%`);
+            }
+            
+            return true;
+        });
+        
+        // Test 3: Detailed Progress Display
+        log('<h2>3. Detailed Progress per Topic:</h2>');
+        
+        test('Detailed progress rendering', () => {
+            Progress.showDetailedProgress();
+            
+            const progressDetails = document.getElementById('progressDetails');
+            if (!progressDetails.innerHTML) {
+                throw new Error('Detailed progress not rendered');
+            }
+            
+            if (!progressDetails.innerHTML.includes('topic-progress')) {
+                throw new Error('Topic progress elements not found');
+            }
+            
+            // Should include topic titles
+            const foundWorkstattregeln = progressDetails.innerHTML.includes('WERKSTATTREGELN');
+            if (!foundWorkstattregeln) {
+                throw new Error('Topic titles not included in detailed progress');
+            }
+            
+            return true;
+        });
+        
+        test('Topic completion calculation', () => {
+            // Add more data to a specific topic
+            const mockPageData3 = {
+                timestamp: new Date().toISOString(),
+                inputs: { input_0: 'Test answer 3' },
+                canvases: {}
+            };
+            
+            Storage.saveWorkbookData('werkstatt-2', mockPageData3);
+            Progress.showDetailedProgress();
+            
+            const progressDetails = document.getElementById('progressDetails');
+            
+            // Should show progress for individual topics
+            if (!progressDetails.innerHTML.includes('topic-progress-fill')) {
+                throw new Error('Topic progress bars not rendered');
+            }
+            
+            return true;
+        });
+        
+        test('Complete topic identification', () => {
+            // Complete all pages of werkstattregeln topic
+            Storage.saveWorkbookData('werkstatt-3', {
+                timestamp: new Date().toISOString(),
+                inputs: { input_0: 'Test answer' },
+                canvases: {}
+            });
+            
+            Progress.showDetailedProgress();
+            
+            const progressDetails = document.getElementById('progressDetails');
+            
+            // Should mark complete topics
+            if (!progressDetails.innerHTML.includes('complete')) {
+                throw new Error('Complete topics not identified');
+            }
+            
+            return true;
+        });
+        
+        // Test 4: Advanced Statistics Calculations
+        log('<h2>4. Advanced Statistics:</h2>');
+        
+        test('Advanced stats calculation with no exam data', () => {
+            const stats = Progress.calculateAdvancedStats();
+            
+            if (typeof stats.totalPages !== 'number') {
+                throw new Error('Total pages not calculated');
+            }
+            
+            if (typeof stats.completedPages !== 'number') {
+                throw new Error('Completed pages not calculated');
+            }
+            
+            if (typeof stats.totalProgress !== 'number') {
+                throw new Error('Total progress not calculated');
+            }
+            
+            if (stats.totalAttempts !== 0) {
+                throw new Error('Total attempts should be 0 without exam data');
+            }
+            
+            if (stats.successRate !== 0) {
+                throw new Error('Success rate should be 0 without exam data');
+            }
+            
+            return true;
+        });
+        
+        test('Advanced stats with exam data', () => {
+            // Create mock exam data
+            const mockExamData = {
+                answers: {},
+                learned: {
+                    'werkstatt-1_input_0': {
+                        correct: 3,
+                        attempts: 4,
+                        correctStreak: 3,
+                        mastered: true
+                    },
+                    'sicherheit-1_input_0': {
+                        correct: 1,
+                        attempts: 3,
+                        correctStreak: 1,
+                        mastered: false
+                    }
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            Storage.saveExamData(mockExamData);
+            
+            const stats = Progress.calculateAdvancedStats();
+            
+            if (stats.totalAttempts !== 7) { // 4 + 3
+                throw new Error(`Total attempts wrong: got ${stats.totalAttempts}, expected 7`);
+            }
+            
+            if (stats.totalCorrect !== 4) { // 3 + 1
+                throw new Error(`Total correct wrong: got ${stats.totalCorrect}, expected 4`);
+            }
+            
+            if (stats.masteredQuestions !== 1) {
+                throw new Error(`Mastered questions wrong: got ${stats.masteredQuestions}, expected 1`);
+            }
+            
+            const expectedSuccessRate = Math.round((4 / 7) * 100); // ~57%
+            if (stats.successRate !== expectedSuccessRate) {
+                throw new Error(`Success rate wrong: got ${stats.successRate}%, expected ${expectedSuccessRate}%`);
+            }
+            
+            return true;
+        });
+        
+        test('Weak areas identification', () => {
+            // Add more exam data with some poor performance
+            const poorExamData = {
+                answers: {},
+                learned: {
+                    'werkstatt-1_input_0': {
+                        correct: 1,
+                        attempts: 5,
+                        correctStreak: 0,
+                        mastered: false
+                    },
+                    'sicherheit-1_input_0': {
+                        correct: 2,
+                        attempts: 6,
+                        correctStreak: 0,
+                        mastered: false
+                    }
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            const weakAreas = Progress.identifyWeakAreas(poorExamData);
+            
+            if (!Array.isArray(weakAreas)) {
+                throw new Error('Weak areas not returned as array');
+            }
+            
+            // Both should be under 70%
+            if (weakAreas.length === 0) {
+                throw new Error('Weak areas not identified for poor performance');
+            }
+            
+            // Should be sorted by performance (worst first)
+            if (weakAreas.length > 1 && weakAreas[0].rate > weakAreas[1].rate) {
+                throw new Error('Weak areas not sorted correctly (worst first)');
+            }
+            
+            return true;
+        });
+        
+        // Test 5: Wrong Answers Analysis
+        log('<h2>5. Wrong Answers Analysis:</h2>');
+        
+        test('Wrong answers identification', () => {
+            const examData = {
+                answers: {},
+                learned: {
+                    'werkstatt-1_input_0': {
+                        correct: 2,
+                        attempts: 5,
+                        correctStreak: 1,
+                        mastered: false
+                    }
+                }
+            };
+            
+            const wrongAnswers = Progress.getDetailedWrongAnswers(examData);
+            
+            if (!Array.isArray(wrongAnswers)) {
+                throw new Error('Wrong answers not returned as array');
+            }
+            
+            if (wrongAnswers.length === 0) {
+                throw new Error('Wrong answers not identified');
+            }
+            
+            const wrongAnswer = wrongAnswers[0];
+            if (wrongAnswer.wrongCount !== 3) { // 5 attempts - 2 correct
+                throw new Error(`Wrong count calculation incorrect: got ${wrongAnswer.wrongCount}, expected 3`);
+            }
+            
+            if (!wrongAnswer.needsReview) {
+                throw new Error('Needs review flag not set correctly');
+            }
+            
+            return true;
+        });
+        
+        test('Wrong answers sorting by frequency', () => {
+            const examData = {
+                answers: {},
+                learned: {
+                    'question1': { correct: 1, attempts: 5, mastered: false }, // 4 wrong
+                    'question2': { correct: 3, attempts: 5, mastered: false }, // 2 wrong
+                    'question3': { correct: 2, attempts: 8, mastered: false }  // 6 wrong
+                }
+            };
+            
+            const wrongAnswers = Progress.getDetailedWrongAnswers(examData);
+            
+            if (wrongAnswers.length < 2) {
+                throw new Error('Not enough wrong answers for sorting test');
+            }
+            
+            // Should be sorted by wrong count (most wrong first)
+            if (wrongAnswers[0].wrongCount < wrongAnswers[1].wrongCount) {
+                throw new Error('Wrong answers not sorted by frequency');
+            }
+            
+            return true;
+        });
+        
+        // Test 6: Stats Display & UI Rendering
+        log('<h2>6. Stats Display & UI Rendering:</h2>');
+        
+        test('Stats overview rendering', () => {
+            Progress.showStats();
+            
+            const statsContent = document.getElementById('statsContent');
+            if (!statsContent.innerHTML) {
+                throw new Error('Stats content not rendered');
+            }
+            
+            if (!statsContent.innerHTML.includes('Gesamtfortschritt')) {
+                throw new Error('Progress overview not included');
+            }
+            
+            if (!statsContent.innerHTML.includes('stat-card')) {
+                throw new Error('Stat cards not rendered');
+            }
+            
+            return true;
+        });
+        
+        test('Progress breakdown rendering with weak areas', () => {
+            // Ensure we have some weak areas
+            const weakExamData = {
+                answers: {},
+                learned: {
+                    'werkstatt-1_input_0': { correct: 1, attempts: 3, mastered: false },
+                    'sicherheit-1_input_0': { correct: 1, attempts: 4, mastered: false }
+                }
+            };
+            
+            Storage.saveExamData(weakExamData);
+            Progress.showStats();
+            
+            const statsContent = document.getElementById('statsContent');
+            if (!statsContent.innerHTML.includes('Bereiche zum Verbessern')) {
+                throw new Error('Weak areas section not rendered');
+            }
+            
+            return true;
+        });
+        
+        test('Motivational messages based on progress', () => {
+            const stats = {
+                totalProgress: 25,
+                masteredQuestions: 2
+            };
+            
+            const message = Progress.renderMotivationalMessage(stats);
+            
+            if (!message.includes('motivational-message')) {
+                throw new Error('Motivational message structure not correct');
+            }
+            
+            if (!message.includes('📈') && !message.includes('🌱')) {
+                throw new Error('Progress-appropriate icon not included');
+            }
+            
+            if (!message.includes('2 Fragen gemeistert')) {
+                throw new Error('Mastery achievement not mentioned');
+            }
+            
+            return true;
+        });
+        
+        test('High progress motivational message', () => {
+            const stats = {
+                totalProgress: 90,
+                masteredQuestions: 15
+            };
+            
+            const message = Progress.renderMotivationalMessage(stats);
+            
+            if (!message.includes('🚀')) {
+                throw new Error('High progress icon not used');
+            }
+            
+            if (!message.includes('kurz vor dem Ziel')) {
+                throw new Error('High progress message not appropriate');
+            }
+            
+            return true;
+        });
+        
+        // Test 7: Legacy Functions & Compatibility
+        log('<h2>7. Legacy Functions & Compatibility:</h2>');
+        
+        test('Topic update functionality', () => {
+            const initialCompleted = Progress.progressData.completed.length;
+            
+            Progress.updateProgress('new-topic-id');
+            
+            if (Progress.progressData.completed.length !== initialCompleted + 1) {
+                throw new Error('Topic not added to completed list');
+            }
+            
+            if (!Progress.progressData.completed.includes('new-topic-id')) {
+                throw new Error('Specific topic not added to completed list');
+            }
+            
+            // Adding same topic again should not duplicate
+            Progress.updateProgress('new-topic-id');
+            
+            if (Progress.progressData.completed.length !== initialCompleted + 1) {
+                throw new Error('Duplicate topic added to completed list');
+            }
+            
+            return true;
+        });
+        
+        test('Review topics legacy function', () => {
+            const examData = {
+                learned: {
+                    'test-question': { correct: 1, attempts: 5, mastered: false }
+                }
+            };
+            
+            const reviewTopics = Progress.getReviewTopics(examData);
+            
+            if (typeof reviewTopics !== 'string') {
+                throw new Error('Review topics not returned as string');
+            }
+            
+            // Should contain list items
+            if (!reviewTopics.includes('<li>')) {
+                throw new Error('Review topics not formatted as list');
+            }
+            
+            return true;
+        });
+        
+        test('Stats update trigger', () => {
+            // Mock active progress section
+            document.getElementById('progressSection').classList.add('active');
+            
+            // Should not throw error
+            try {
+                Progress.updateStats();
+            } catch (error) {
+                throw new Error('Stats update failed: ' + error.message);
+            }
+            
+            return true;
+        });
+        
+        test('Congratulations display', () => {
+            Progress.showCongratulations();
+            
+            const progressContent = document.getElementById('progressContent');
+            const congratsElement = progressContent.querySelector('.congratulations');
+            
+            if (!congratsElement) {
+                throw new Error('Congratulations element not added');
+            }
+            
+            if (!congratsElement.innerHTML.includes('Herzlichen Glückwunsch')) {
+                throw new Error('Congratulations text not correct');
+            }
+            
+            // Should not duplicate when called again
+            Progress.showCongratulations();
+            
+            const congratsElements = progressContent.querySelectorAll('.congratulations');
+            if (congratsElements.length > 1) {
+                throw new Error('Congratulations message duplicated');
+            }
+            
+            return true;
+        });
+        
+        // Test 8: Error Handling & Edge Cases
+        log('<h2>8. Error Handling & Edge Cases:</h2>');
+        
+        test('Missing DOM elements handling', () => {
+            // Remove DOM elements temporarily
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const originalFillParent = progressFill.parentNode;
+            const originalTextParent = progressText.parentNode;
+            
+            progressFill.remove();
+            progressText.remove();
+            
+            // Should not throw error
+            try {
+                Progress.updateDisplay();
+            } catch (error) {
+                throw new Error('UpdateDisplay failed with missing DOM elements: ' + error.message);
+            } finally {
+                // Restore elements
+                originalFillParent.appendChild(progressFill);
+                originalTextParent.appendChild(progressText);
+            }
+            
+            return true;
+        });
+        
+        test('Invalid exam data handling', () => {
+            const invalidExamData = {
+                learned: {
+                    'invalid-question': null, // Invalid question data
+                    'another-invalid': { attempts: 'not-a-number' } // Invalid structure
+                }
+            };
+            
+            // Should not throw errors
+            try {
+                const weakAreas = Progress.identifyWeakAreas(invalidExamData);
+                const wrongAnswers = Progress.getDetailedWrongAnswers(invalidExamData);
+                const stats = Progress.calculateAdvancedStats();
+            } catch (error) {
+                throw new Error('Failed to handle invalid exam data: ' + error.message);
+            }
+            
+            return true;
+        });
+        
+        test('Empty workbook data handling', () => {
+            // Clear workbook data
+            localStorage.removeItem('werkbuch_workbook_werkstatt-1');
+            localStorage.removeItem('werkbuch_workbook_sicherheit-1');
+            
+            try {
+                const stats = Progress.calculateAdvancedStats();
+                Progress.updateDisplay();
+                Progress.showDetailedProgress();
+                Progress.showStats();
+            } catch (error) {
+                throw new Error('Failed to handle empty workbook data: ' + error.message);
+            }
+            
+            return true;
+        });
+        
+        // Final Results
+        setTimeout(() => {
+            log(`<h2>🎯 Test Results: ${testsPassed}/${testsTotal} tests passed</h2>`);
+            
+            if (testsPassed === testsTotal) {
+                log('<h2 style="color: green">✅ All progress module tests PASSED!</h2>');
+                log('<p>📊 Basic progress calculations working correctly</p>');
+                log('<p>🎯 Detailed topic progress tracking functional</p>');
+                log('<p>📈 Advanced statistics and analytics operational</p>');
+                log('<p>⚠️ Weak areas identification working properly</p>');
+                log('<p>❌ Wrong answers analysis comprehensive</p>');
+                log('<p>🎨 UI rendering and motivational messages working</p>');
+                log('<p>🔄 Legacy compatibility maintained</p>');
+                log('<p>🛡️ Error handling for edge cases robust</p>');
+            } else {
+                log(`<h2 style="color: red">❌ ${testsTotal - testsPassed} tests FAILED</h2>`);
+            }
+            
+            // Clean up
+            localStorage.clear();
+            Progress.progressData = null;
+        }, 100);
+    </script>
+</body>
+</html>
