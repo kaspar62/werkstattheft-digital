@@ -16,11 +16,24 @@ const Progress = {
         this.updateDisplay();
     },
     
-    // Anzeige aktualisieren
+    // MS-09: Anzeige aktualisieren mit Seiten-basiertem Fortschritt
     updateDisplay() {
-        const totalTopics = Workbook.topics.length;
-        const completedTopics = this.progressData.completed.length;
-        const percentage = Math.round((completedTopics / totalTopics) * 100);
+        // Berechne Fortschritt basierend auf gespeicherten Seiten, nicht Themen
+        const allWorkbookData = Storage.getAllWorkbookData();
+        let totalPages = 0;
+        let completedPages = 0;
+        
+        // Alle Seiten durchgehen
+        Workbook.topics.forEach(topic => {
+            totalPages += topic.pages.length;
+            topic.pages.forEach(page => {
+                if (allWorkbookData[page.id]) {
+                    completedPages++;
+                }
+            });
+        });
+        
+        const percentage = totalPages > 0 ? Math.round((completedPages / totalPages) * 100) : 0;
         
         const progressFill = document.getElementById('progressFill');
         const progressText = document.getElementById('progressText');
@@ -30,13 +43,52 @@ const Progress = {
         }
         
         if (progressText) {
-            progressText.textContent = percentage + '%';
+            progressText.textContent = `${completedPages} von ${totalPages} Seiten (${percentage}%)`;
         }
+        
+        // MS-09: Detaillierte Fortschrittsanzeige
+        this.showDetailedProgress();
         
         // Motivations-Nachricht
         if (percentage === 100) {
             this.showCongratulations();
         }
+    },
+    
+    // MS-09: Detaillierter Fortschritt pro Thema
+    showDetailedProgress() {
+        const detailsContent = document.getElementById('progressDetails');
+        if (!detailsContent) return;
+        
+        const allWorkbookData = Storage.getAllWorkbookData();
+        let html = '<div class="progress-topics">';
+        
+        Workbook.topics.forEach(topic => {
+            let topicCompleted = 0;
+            let topicTotal = topic.pages.length;
+            
+            topic.pages.forEach(page => {
+                if (allWorkbookData[page.id]) {
+                    topicCompleted++;
+                }
+            });
+            
+            const topicPercent = topicTotal > 0 ? Math.round((topicCompleted / topicTotal) * 100) : 0;
+            const isComplete = topicPercent === 100;
+            
+            html += `
+                <div class="topic-progress ${isComplete ? 'complete' : ''}">
+                    <h4>${topic.title}</h4>
+                    <div class="topic-progress-bar">
+                        <div class="topic-progress-fill" style="width: ${topicPercent}%"></div>
+                    </div>
+                    <span class="topic-progress-text">${topicCompleted} / ${topicTotal} Seiten</span>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        detailsContent.innerHTML = html;
     },
     
     // Statistiken anzeigen
@@ -63,7 +115,7 @@ const Progress = {
                     <p class="stat-number">${completedTopics} / ${totalTopics}</p>
                 </div>
                 <div class="stat-card">
-                    <h4>Prüfungsversuche</h4>
+                    <h4>Prï¿½fungsversuche</h4>
                     <p class="stat-number">${totalAttempts}</p>
                 </div>
                 <div class="stat-card">
@@ -109,12 +161,12 @@ const Progress = {
         }
     },
     
-    // Glückwünsche anzeigen
+    // Glï¿½ckwï¿½nsche anzeigen
     showCongratulations() {
         const message = document.createElement('div');
         message.className = 'congratulations';
         message.innerHTML = `
-            <h2>Herzlichen Glückwunsch!</h2>
+            <h2>Herzlichen Glï¿½ckwunsch!</h2>
             <p>Du hast alle Themen abgeschlossen!</p>
         `;
         
