@@ -1,7 +1,10 @@
 // Main App Module - Hauptanwendungslogik
 const App = {
     // App initialisieren
-    init() {
+    async init() {
+        // WICHTIG: Warte auf Auth-Initialisierung
+        await Auth.init();
+        
         // Auto-Login prüfen
         if (Auth.checkAutoLogin()) {
             this.showMainApp();
@@ -95,7 +98,7 @@ const App = {
             el.textContent = user.class;
         });
         
-        // Login-Zeit anzeigen (MS-04 Profil-Info)
+        // Login-Zeit anzeigen
         const now = new Date();
         const timeString = now.toLocaleTimeString('de-DE', { 
             hour: '2-digit', 
@@ -107,20 +110,14 @@ const App = {
         }
         
         // Module initialisieren
-        Progress.init();
-        Exam.init();
-        
         // Workbook Menü initialisieren
         Workbook.initMenu();
         
-        // Fortschritt anzeigen
-        Progress.updateDisplay();
-        
-        // Homepage Statistiken aktualisieren (MS-04)
+        // Homepage Statistiken aktualisieren
         this.updateHomepageStats();
         
-        // Navigation aktivieren
-        this.activateNavigation();
+        // Zur Startseite navigieren
+        this.navigateTo('start');
     },
     
     // Navigation Setup
@@ -135,15 +132,9 @@ const App = {
         });
     },
     
-    // Navigation aktivieren nach Login
-    activateNavigation() {
-        // Erste Tab als aktiv setzen
-        this.navigateTo('start');
-    },
-    
     // Navigation zu Section
     navigateTo(section) {
-        console.log('MS-03: Navigating to:', section);
+        console.log('Navigating to:', section);
         
         // Navigation Buttons aktualisieren
         document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -158,21 +149,12 @@ const App = {
         const targetSection = document.getElementById(section + 'Section');
         if (targetSection) {
             targetSection.classList.add('active');
-            console.log('MS-03: Section activated:', section);
+            console.log('Section activated:', section);
             
-            // Spezielle Aktionen pro Section (MINIMAL für MS-03)
+            // Spezielle Aktionen pro Section
             switch(section) {
-                case 'exam':
-                    // MS-11: Prüfungsbereich aktivieren
-                    Exam.showExamContent();
-                    break;
-                case 'progress':
-                    // MS-09: Erweiterte Progress-Anzeige
-                    Progress.updateDisplay();
-                    Progress.showStats();
-                    break;
                 case 'workbook':
-                    // Menu initialisieren für MS-03
+                    // Menu initialisieren
                     Workbook.initMenu();
                     break;
                 case 'start':
@@ -180,29 +162,40 @@ const App = {
                     break;
             }
         } else {
-            console.error('MS-03: Section not found:', section + 'Section');
+            console.error('Section not found:', section + 'Section');
         }
     },
     
-    // Homepage Statistiken aktualisieren (MS-04)
+    // Homepage Statistiken aktualisieren
     updateHomepageStats() {
-        const completedTopicsEl = document.getElementById('completedTopics');
-        const progressPercentEl = document.getElementById('progressPercent');
+        const savedPagesEl = document.getElementById('savedPages');
         
-        if (completedTopicsEl && progressPercentEl) {
-            // Einfache Berechnung basierend auf gespeicherten Daten
+        if (savedPagesEl) {
+            // Zähle gespeicherte Seiten
             const workbookData = Storage.getAllWorkbookData();
-            const totalTopics = Workbook.topics.length;
-            const completedCount = Object.keys(workbookData).length;
-            const progressPercent = totalTopics > 0 ? Math.round((completedCount / totalTopics) * 100) : 0;
+            const savedCount = Object.keys(workbookData).length;
             
-            completedTopicsEl.textContent = completedCount;
-            progressPercentEl.textContent = progressPercent + '%';
+            savedPagesEl.textContent = savedCount;
         }
+    },
+    
+    // Logout-Funktion
+    logout() {
+        // Auth-System logout
+        Auth.logout();
+        
+        // Zurück zum Login-Screen
+        document.getElementById('mainApp').classList.remove('active');
+        document.getElementById('loginScreen').classList.add('active');
+        
+        // Login-Form zurücksetzen
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('loginError').classList.remove('show');
     }
 };
 
 // App starten wenn DOM geladen
-document.addEventListener('DOMContentLoaded', () => {
-    App.init();
+document.addEventListener('DOMContentLoaded', async () => {
+    await App.init();
 });

@@ -4,22 +4,12 @@ const Workbook = {
     topics: [
         { 
             id: 'werkstattregeln', 
-            title: 'WERKSTATTREGELN', 
-            category: 'Grundlagen',
+            title: 'Werkstattregeln', 
+            category: 'GRUNDLAGEN',
             pages: [
                 { 
-                    id: 'werkstatt-1', 
-                    title: 'WERKSTATTREGELN - Seite 1', 
-                    type: 'content', 
-                    image: 'titelbild.jpg',
-                    inputs: [
-                        { type: 'text', placeholder: 'Name', maxLength: 40 },
-                        { type: 'text', placeholder: 'Klasse', maxLength: 20 }
-                    ]
-                },
-                { 
-                    id: 'werkstatt-2', 
-                    title: 'WERKSTATTREGELN - Seite 2', 
+                    id: 'werkstatt-regeln', 
+                    title: 'WERKSTATTREGELN', 
                     type: 'content',
                     questions: [
                         {
@@ -53,14 +43,7 @@ const Workbook = {
                             inputs: [
                                 { type: 'text', placeholder: 'Antwort', maxLength: 60 }
                             ]
-                        }
-                    ]
-                },
-                { 
-                    id: 'werkstatt-3', 
-                    title: 'WERKSTATTREGELN - Seite 3', 
-                    type: 'content',
-                    questions: [
+                        },
                         {
                             question: 'Welche Fragen stelle ich mir vor Werkzeugverwendung?',
                             inputs: [
@@ -98,163 +81,186 @@ const Workbook = {
         },
         { 
             id: 'sicherheit', 
-            title: 'SICHERHEIT IN DER WERKSTATT', 
-            category: 'Grundlagen',
+            title: 'Sicherheit in der Werkstatt', 
+            category: 'GRUNDLAGEN',
             pages: [
                 { 
-                    id: 'sicherheit-1', 
-                    title: 'SICHERHEIT IN DER WERKSTATT', 
-                    type: 'content', 
-                    images: ['augenschutz_icon.jpg', 'gehoerschutz_icon.jpg', 'atemschutz_icon.jpg', 'haare_icon.jpg', 'schmuck_icon.jpg', 'weitekleider_icon.jpg'],
-                    questions: [
-                        {
-                            question: 'Welches sind deine 6 persönlichen Sicherheitsregeln?',
-                            inputs: [
-                                { type: 'text', placeholder: '1.', maxLength: 70 },
-                                { type: 'text', placeholder: '2.', maxLength: 70 },
-                                { type: 'text', placeholder: '3.', maxLength: 70 },
-                                { type: 'text', placeholder: '4.', maxLength: 70 },
-                                { type: 'text', placeholder: '5.', maxLength: 70 },
-                                { type: 'text', placeholder: '6.', maxLength: 70 }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        { 
-            id: 'werkstatt-maschinen', 
-            title: 'Werkstatt, Maschinen und Werkzeuge', 
-            category: 'Grundlagen',
-            pages: [
-                { 
-                    id: 'werkstatt-maschinen-1', 
-                    title: 'Werkstatt, Maschinen und Werkzeuge', 
+                    id: 'sicherheit-alle', 
+                    title: 'Sicherheit in der Werkstatt', 
                     type: 'content',
-                    questions: [
+                    sections: [
                         {
-                            question: 'Darf ich mich alleine in der Werkstatt aufhalten?',
-                            inputs: [
-                                { type: 'text', placeholder: 'Ja/Nein', maxLength: 30 }
+                            subtitle: 'Die sechs persönlichen Sicherheitsregeln',
+                            questions: [
+                                {
+                                    question: 'Welches sind deine 6 persönlichen Sicherheitsregeln?',
+                                    inputsWithIcons: [
+                                        { type: 'text', placeholder: '1. Sicherheitsregel', maxLength: 70, icon: 'augenschutz_icon.jpg' },
+                                        { type: 'text', placeholder: '2. Sicherheitsregel', maxLength: 70, icon: 'gehoerschutz_icon.jpg' },
+                                        { type: 'text', placeholder: '3. Sicherheitsregel', maxLength: 70, icon: 'atemschutz_icon.jpg' },
+                                        { type: 'text', placeholder: '4. Sicherheitsregel', maxLength: 70, icon: 'haare_icon.jpg' },
+                                        { type: 'text', placeholder: '5. Sicherheitsregel', maxLength: 70, icon: 'schmuck_icon.jpg' },
+                                        { type: 'text', placeholder: '6. Sicherheitsregel', maxLength: 70, icon: 'weitekleider_icon.jpg' }
+                                    ]
+                                }
                             ]
                         },
                         {
-                            question: 'Erkläre warum?',
-                            inputs: [
-                                { type: 'text', placeholder: 'Begründung', maxLength: 70 }
+                            subtitle: 'Werkstatt, Maschinen und Werkzeuge',
+                            questions: [
+                                {
+                                    question: 'Darf ich mich alleine in der Werkstatt aufhalten?',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'Ja/Nein', maxLength: 30 }
+                                    ]
+                                },
+                                {
+                                    question: 'Erkläre warum?',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'Begründung', maxLength: 70 }
+                                    ]
+                                },
+                                {
+                                    question: 'Wie verhalte ich mich bei Unsicherheit?',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'Antwort', maxLength: 70 }
+                                    ]
+                                },
+                                {
+                                    question: 'Wieviele Personen dürfen an einer Maschine arbeiten?',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'Anzahl', maxLength: 15 }
+                                    ]
+                                },
+                                {
+                                    question: 'Was sind die Gründe?',
+                                    inputs: [
+                                        { type: 'textarea', placeholder: 'Begründung (2 Zeilen)', rows: 2, maxLength: 140 }
+                                    ]
+                                },
+                                {
+                                    question: 'Was muss ich bei Maschinen anziehen?',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'Antwort', maxLength: 30 }
+                                    ]
+                                },
+                                {
+                                    question: 'Bei Staub/Dämpfen achte ich darauf, dass...',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'a)', maxLength: 60 },
+                                        { type: 'text', placeholder: 'b)', maxLength: 60 }
+                                    ]
+                                }
                             ]
                         },
                         {
-                            question: 'Wie verhalte ich mich bei Unsicherheit?',
-                            inputs: [
-                                { type: 'text', placeholder: 'Antwort', maxLength: 70 }
-                            ]
-                        },
-                        {
-                            question: 'Wieviele Personen dürfen an einer Maschine arbeiten?',
-                            inputs: [
-                                { type: 'text', placeholder: 'Anzahl', maxLength: 15 }
-                            ]
-                        },
-                        {
-                            question: 'Was sind die Gründe?',
-                            inputs: [
-                                { type: 'textarea', placeholder: 'Begründung (2 Zeilen)', rows: 2, maxLength: 140 }
-                            ]
-                        },
-                        {
-                            question: 'Was muss ich bei Maschinen anziehen?',
-                            inputs: [
-                                { type: 'text', placeholder: 'Antwort', maxLength: 30 }
-                            ]
-                        },
-                        {
-                            question: 'Bei Staub/Dämpfen achte ich darauf, dass...',
-                            inputs: [
-                                { type: 'text', placeholder: 'a)', maxLength: 60 },
-                                { type: 'text', placeholder: 'b)', maxLength: 60 }
+                            subtitle: 'Verhalten bei Verletzungen - erste Hilfe',
+                            questions: [
+                                {
+                                    question: 'Was mache ich bei einer Augenverletzung?',
+                                    icon: 'auge.jpg',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'a)', maxLength: 80 },
+                                        { type: 'text', placeholder: 'b)', maxLength: 80 },
+                                        { type: 'text', placeholder: 'c)', maxLength: 80 }
+                                    ]
+                                },
+                                {
+                                    question: 'Was mache ich bei einem Schnitt?',
+                                    icon: 'schnitt.jpg',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'a)', maxLength: 80 },
+                                        { type: 'text', placeholder: 'b)', maxLength: 80 },
+                                        { type: 'text', placeholder: 'c)', maxLength: 80 }
+                                    ]
+                                },
+                                {
+                                    question: 'Was mache ich bei einer Verbrennung?',
+                                    icon: 'verbrennung.jpg',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'a)', maxLength: 80 },
+                                        { type: 'text', placeholder: 'b)', maxLength: 80 },
+                                        { type: 'text', placeholder: 'c)', maxLength: 80 }
+                                    ]
+                                },
+                                {
+                                    question: 'Was mache ich bei einer Prellung?',
+                                    icon: 'prellung.jpg',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'a)', maxLength: 80 },
+                                        { type: 'text', placeholder: 'b)', maxLength: 80 },
+                                        { type: 'text', placeholder: 'c)', maxLength: 80 }
+                                    ]
+                                },
+                                {
+                                    question: 'Was mache ich bei einer Schürfung?',
+                                    icon: 'schuerfung.jpg',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'a)', maxLength: 80 },
+                                        { type: 'text', placeholder: 'b)', maxLength: 80 },
+                                        { type: 'text', placeholder: 'c)', maxLength: 80 }
+                                    ]
+                                }
                             ]
                         }
                     ]
-                }
-            ]
-        },
-        { 
-            id: 'verletzungen', 
-            title: 'Verhalten bei Verletzungen - ERSTE HILFE', 
-            category: 'Grundlagen',
-            pages: [
-                { 
-                    id: 'verletzungen-1', 
-                    title: 'Verhalten bei Verletzungen - ERSTE HILFE', 
-                    type: 'content', 
-                    images: ['auge.jpg', 'schnitt.jpg', 'verbrennung.jpg', 'prellung.jpg', 'schuerfung.jpg'] 
                 }
             ]
         },
         { 
             id: 'zangen', 
-            title: 'WERKZEUGE UND MASCHINEN - Zangen', 
-            category: 'Werkzeuge',
+            title: 'Zangen', 
+            category: 'WERKZEUGE',
             pages: [
                 { 
-                    id: 'zangen-1', 
-                    title: 'Zangen - Seite 1', 
-                    type: 'content', 
-                    images: ['zange_beiss.jpg', 'zange_kombi.jpg'],
-                    questions: [
+                    id: 'zangen-alle', 
+                    title: 'Zangen', 
+                    type: 'content',
+                    toolsWithImages: [
                         {
-                            question: 'Werkzeug 1',
+                            image: 'zange_beiss.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendung a)', maxLength: 40 },
-                                { type: 'text', placeholder: 'Verwendung b)', maxLength: 40 }
-                            ]
-                        },
-                        {
-                            question: 'Werkzeug 2',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendung a)', maxLength: 40 },
-                                { type: 'text', placeholder: 'Verwendung b)', maxLength: 40 },
-                                { type: 'text', placeholder: 'Verwendung c)', maxLength: 40 },
-                                { type: 'text', placeholder: 'Nicht für:', maxLength: 40 }
-                            ]
-                        }
-                    ]
-                },
-                { 
-                    id: 'zangen-2', 
-                    title: 'Zangen - Seite 2', 
-                    type: 'content', 
-                    images: ['zange_seitenschneider.jpg', 'zange_spitz.jpg', 'zange_rund.jpg', 'zange_flach.jpg'],
-                    questions: [
-                        {
-                            question: 'Werkzeug 1',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
-                            ]
-                        },
-                        {
-                            question: 'Werkzeug 2',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
                                 { type: 'text', placeholder: 'Verwendung a)', maxLength: 50 },
                                 { type: 'text', placeholder: 'Verwendung b)', maxLength: 50 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 3',
+                            image: 'zange_kombi.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
+                                { type: 'text', placeholder: 'Verwendung a)', maxLength: 50 },
+                                { type: 'text', placeholder: 'Verwendung b)', maxLength: 50 },
+                                { type: 'text', placeholder: 'Verwendung c)', maxLength: 50 },
+                                { type: 'text', placeholder: 'Nicht für:', maxLength: 50 }
+                            ]
+                        },
+                        {
+                            image: 'zange_seitenschneider.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
                                 { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 4',
+                            image: 'zange_spitz.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
+                                { type: 'text', placeholder: 'Verwendung a)', maxLength: 50 },
+                                { type: 'text', placeholder: 'Verwendung b)', maxLength: 50 }
+                            ]
+                        },
+                        {
+                            image: 'zange_rund.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
+                                { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
+                            ]
+                        },
+                        {
+                            image: 'zange_flach.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
                                 { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
                             ]
                         }
@@ -265,80 +271,180 @@ const Workbook = {
         { 
             id: 'schraubenzieher', 
             title: 'Schraubenzieher, -dreher', 
-            category: 'Werkzeuge',
+            category: 'WERKZEUGE',
             pages: [
                 { 
-                    id: 'schraubenzieher-1', 
+                    id: 'schraubenzieher-alle', 
                     title: 'Schraubenzieher, -dreher', 
-                    type: 'content', 
-                    images: ['schraubenzieher_schlitz.jpg', 'schraubenzieher_kreuz.jpg', 'schraubenzieher_torx.jpg', 'schraubaufsaetze.jpg', 'akkubohrer_schrauber.jpg'],
-                    questions: [
+                    type: 'content',
+                    toolsWithImages: [
                         {
-                            question: 'Werkzeug 1',
+                            image: 'schraubenzieher_schlitz.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 2', 
+                            image: 'schraubenzieher_kreuz.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 3',
+                            image: 'schraubenzieher_torx.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 }
-                            ]
-                        },
-                        {
-                            question: 'Besonderheit des dritten Werkzeugs:',
-                            inputs: [
-                                { type: 'textarea', placeholder: 'Besonderheit (2 Zeilen)', rows: 2, maxLength: 100 }
-                            ]
-                        },
-                        {
-                            question: 'In welche Richtung wird eine Schraube eingedreht?',
-                            inputs: [
-                                { type: 'text', placeholder: 'Antwort', maxLength: 40 }
                             ]
                         }
-                    ]
+                    ],
+                    specialSection: {
+                        mainImage: 'schraubaufsaetze.jpg',
+                        smallImage: 'akkubohrer_schrauber.jpg',
+                        text: 'Gibt es auch als Aufsätze für den Akkubohrer'
+                    },
+                    finalQuestion: {
+                        question: 'In welche Richtung wird eine Schraube eingedreht?',
+                        inputs: [
+                            { type: 'text', placeholder: 'Antwort', maxLength: 40 }
+                        ]
+                    }
                 }
             ]
         },
         { 
             id: 'messen', 
             title: 'Messen', 
-            category: 'Techniken',
+            category: 'TECHNIKEN',
             pages: [
                 { 
-                    id: 'messen-1', 
+                    id: 'messen-alle', 
                     title: 'Messen', 
-                    type: 'content', 
-                    images: ['metalllineal.jpg', 'doppelmeter.jpg', 'schreinerwinkel.jpg'],
-                    questions: [
+                    type: 'content',
+                    toolsWithImages: [
                         {
-                            question: 'Werkzeug 1',
+                            image: 'metalllineal.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
+                                { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
+                            ]
+                        },
+                        {
+                            image: 'doppelmeter.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
+                                { type: 'text', placeholder: 'Verwendung', maxLength: 50 },
+                                { type: 'text', placeholder: 'Besonderheit', maxLength: 40 }
+                            ]
+                        },
+                        {
+                            image: 'schreinerwinkel.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
+                                { type: 'text', placeholder: 'Verwendung a)', maxLength: 40 },
+                                { type: 'text', placeholder: 'Verwendung b)', maxLength: 40 }
+                            ]
+                        },
+                    ],
+                    schieblehreQuestion: {
+                        question: 'Was messe ich mit diesem Messwerkzeug?',
+                        sections: [
+                            {
+                                title: 'a)',
+                                inputs: [
+                                    { type: 'text', placeholder: 'Antwort 1', maxLength: 50 },
+                                    { type: 'text', placeholder: 'Antwort 2', maxLength: 50 }
+                                ]
+                            },
+                            {
+                                title: 'b)',
+                                inputs: [
+                                    { type: 'text', placeholder: 'Antwort 1', maxLength: 50 },
+                                    { type: 'text', placeholder: 'Antwort 2', maxLength: 50 }
+                                ]
+                            },
+                            {
+                                title: 'c)',
+                                inputs: [
+                                    { type: 'text', placeholder: 'Antwort 1', maxLength: 50 },
+                                    { type: 'text', placeholder: 'Antwort 2', maxLength: 50 }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        { 
+            id: 'bohren', 
+            title: 'Bohren', 
+            category: 'TECHNIKEN',
+            pages: [
+                { 
+                    id: 'bohren-alle', 
+                    title: 'BOHREN', 
+                    type: 'content',
+                    toolsWithImages: [
+                        {
+                            image: 'bohraufsatz_holz.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Erkennungsmerkmal', maxLength: 50 }
+                            ]
+                        },
+                        {
+                            image: 'bohraufsatz_metall.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Erkennungsmerkmal', maxLength: 50 }
+                            ]
+                        },
+                        {
+                            image: 'bohraufsatz_stein.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Besonderheit', maxLength: 40 }
+                            ]
+                        },
+                        {
+                            image: 'bohraufsatz_forster.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 2',
+                            image: 'bohraufsatz_senker.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendung', maxLength: 50 },
-                                { type: 'text', placeholder: 'Besonderheit', maxLength: 40 }
+                                { type: 'text', placeholder: 'Zweck', maxLength: 50 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 3',
+                            image: 'akkubohrer_schrauber.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendung a)', maxLength: 40 },
-                                { type: 'text', placeholder: 'Verwendung b)', maxLength: 40 }
+                                { type: 'text', placeholder: 'Name der Maschine', maxLength: 25 },
+                                { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
+                            ]
+                        },
+                        {
+                            image: 'schlagbohrer.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name der Maschine', maxLength: 25 },
+                                { type: 'text', placeholder: 'Besonderheit', maxLength: 50 }
+                            ]
+                        }
+                    ],
+                    questions: [
+                        {
+                            question: 'In welche Richtung muss der Bohrer drehen?',
+                            inputs: [
+                                { type: 'text', placeholder: 'Antwort', maxLength: 40 }
+                            ]
+                        },
+                        {
+                            question: 'Was bedeutet dieses Zeichen an einer Bohrmaschine?',
+                            inputs: [
+                                { type: 'text', placeholder: 'Bedeutung', maxLength: 50 }
                             ]
                         }
                     ]
@@ -346,77 +452,43 @@ const Workbook = {
             ]
         },
         { 
-            id: 'bohren', 
-            title: 'Bohren', 
-            category: 'Techniken',
+            id: 'standbohrmaschine', 
+            title: 'Standbohrmaschine', 
+            category: 'TECHNIKEN',
             pages: [
                 { 
-                    id: 'bohren-1', 
-                    title: 'Bohren - Seite 1', 
-                    type: 'content', 
-                    images: ['bohraufsatz_holz.jpg', 'bohraufsatz_metall.jpg', 'bohraufsatz_stein.jpg', 'bohraufsatz_forster.jpg', 'bohraufsatz_senker.jpg', 'akkubohrer_schrauber.jpg', 'schlagbohrer.jpg', 'hammer_icon.jpg'],
-                    questions: [
-                        {
-                            question: 'Werkzeug 1',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Erkennungsmerkmal', maxLength: 50 }
-                            ]
-                        },
-                        {
-                            question: 'Werkzeug 2',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Erkennungsmerkmal', maxLength: 50 }
-                            ]
-                        },
-                        {
-                            question: 'Werkzeug 3',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Besonderheit', maxLength: 40 }
-                            ]
-                        },
-                        {
-                            question: 'Werkzeug 4',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
-                            ]
-                        },
-                        {
-                            question: 'Werkzeug 5',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Zweck', maxLength: 50 }
-                            ]
-                        },
-                        {
-                            question: 'Warum bohrt man mit einem Schlagbohrer?',
-                            inputs: [
-                                { type: 'textarea', placeholder: 'Begründung (2 Zeilen)', rows: 2, maxLength: 100 }
-                            ]
-                        }
-                    ]
-                },
-                { 
-                    id: 'bohren-2', 
-                    title: 'Bohren - Seite 2', 
-                    type: 'content', 
-                    image: 'standbohrmaschine.jpg',
-                    questions: [
-                        {
-                            question: 'Wofür verwendet man die Standbohrmaschine?',
-                            inputs: [
-                                { type: 'textarea', placeholder: 'Verwendungszweck (3 Zeilen)', rows: 3, maxLength: 150 }
-                            ]
-                        },
-                        {
-                            question: 'Welche Sicherheitsregeln gelten bei der Standbohrmaschine?',
+                    id: 'standbohrmaschine-main', 
+                    title: 'STANDBOHRMASCHINE', 
+                    type: 'content',
+                    machineLayout: {
+                        image: 'standbohrmaschine.jpg',
+                        nameInput: { type: 'text', placeholder: 'Name der Maschine', maxLength: 40 },
+                        properties: [
+                            { type: 'text', placeholder: 'Eigenschaft 1', maxLength: 50 },
+                            { type: 'text', placeholder: 'Eigenschaft 2', maxLength: 50 },
+                            { type: 'text', placeholder: 'Eigenschaft 3', maxLength: 50 }
+                        ],
+                        imageQuestion: {
+                            question: 'Wie stelle ich die Bohrtiefe bei der Standbohrmaschine ein?',
                             inputs: [
                                 { type: 'text', placeholder: '1.', maxLength: 60 },
                                 { type: 'text', placeholder: '2.', maxLength: 60 },
-                                { type: 'text', placeholder: '3.', maxLength: 60 }
+                                { type: 'text', placeholder: '3.', maxLength: 60 },
+                                { type: 'text', placeholder: '4.', maxLength: 60 }
+                            ]
+                        }
+                    },
+                    questions: [
+                        {
+                            question: 'Wie stelle ich die Drehgeschwindigkeit bei Metallwerkstücken ein?',
+                            inputs: [
+                                { type: 'textarea', placeholder: 'Antwort', rows: 3, maxLength: 200 }
+                            ]
+                        },
+                        {
+                            question: 'Was muss ich tun um bei einem Metallwerkstück das Bohrloch exakt zu platzieren und ein Abrutschen des Bohrers zu verhindern?',
+                            inputs: [
+                                { type: 'textarea', placeholder: 'Antwort', rows: 3, maxLength: 200 }
                             ]
                         }
                     ]
@@ -426,23 +498,22 @@ const Workbook = {
         { 
             id: 'schleifen', 
             title: 'Schleifen', 
-            category: 'Techniken',
+            category: 'TECHNIKEN',
             pages: [
                 { 
-                    id: 'schleifen-1', 
-                    title: 'Schleifen - Seite 1', 
-                    type: 'content', 
-                    images: ['feile_metall.jpg', 'feile_raspel.jpg', 'schleifpapier.jpg'],
-                    questions: [
+                    id: 'schleifen-alle', 
+                    title: 'SCHLEIFEN', 
+                    type: 'content',
+                    toolsWithImages: [
                         {
-                            question: 'Werkzeug 1',
+                            image: 'feile_metall.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 2',
+                            image: 'feile_raspel.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Verwendung', maxLength: 50 },
@@ -450,29 +521,53 @@ const Workbook = {
                             ]
                         },
                         {
-                            question: 'Werkzeug 3',
+                            image: 'schleifpapier.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Verwendung a)', maxLength: 40 },
                                 { type: 'text', placeholder: 'Verwendung b)', maxLength: 40 },
                                 { type: 'text', placeholder: 'Körnungen von grob zu fein:', maxLength: 50 }
                             ]
-                        }
-                    ]
-                },
-                { 
-                    id: 'schleifen-2', 
-                    title: 'Schleifen - Seite 2', 
-                    type: 'content', 
-                    images: ['tellerschleifer.jpg', 'convex.jpg', 'oszilierende.jpg', 'concav.jpg'],
-                    questions: [
+                        },
                         {
-                            question: 'Werkzeug 1',
+                            image: 'tellerschleifer.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
+                            ],
+                            specialQuestions: [
+                                {
+                                    question: 'In welcher Zone der Tellerschleifmaschine darf ich schleifen?',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'Antwort 1', maxLength: 60 },
+                                        { type: 'text', placeholder: 'Antwort 2', maxLength: 60 }
+                                    ]
+                                },
+                                {
+                                    question: 'Warum darf ich nur in dieser Zone der Tellerschleifmaschine mein Werkstück schleifen?',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'Antwort 1', maxLength: 60 },
+                                        { type: 'text', placeholder: 'Antwort 2', maxLength: 60 }
+                                    ]
+                                },
+                                {
+                                    question: 'An welcher Stelle schleift die Tellerschleifmaschine das meiste Material ab?',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'Antwort 1', maxLength: 60 },
+                                        { type: 'text', placeholder: 'Antwort 2', maxLength: 60 }
+                                    ]
+                                }
                             ]
                         },
+                        {
+                            image: 'oszilierende.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 40 },
+                                { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
+                            ]
+                        }
+                    ],
+                    questions: [
                         {
                             question: 'Was bedeutet "konvex"?',
                             inputs: [
@@ -498,81 +593,80 @@ const Workbook = {
         { 
             id: 'saegen', 
             title: 'Sägen', 
-            category: 'Techniken',
+            category: 'TECHNIKEN',
             pages: [
                 { 
-                    id: 'saegen-1', 
-                    title: 'Sägen - Seite 1', 
-                    type: 'content', 
-                    images: ['metallsaege.jpg', 'metall_saegeblatt.jpg', 'dekupiersaege.jpg', 'stichsaege.jpg', 'holz_saegeblatt.jpg', 'japansaege.jpg'],
-                    questions: [
+                    id: 'saegen-alle', 
+                    title: 'SÄGEN', 
+                    type: 'content',
+                    toolsWithImages: [
                         {
-                            question: 'Werkzeug 1',
+                            image: 'metallsaege.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 2',
+                            image: 'japansaege.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 }
+                            ]
+                        },
+                        {
+                            image: 'dekupiersaege.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Verwendung a)', maxLength: 40 },
+                                { type: 'text', placeholder: 'Verwendung b)', maxLength: 40 }
+                            ],
+                            specialQuestions: [
+                                {
+                                    question: 'Zähle die Punkte der Reihenfolge auf, wie du ein neues Sägeblatt in die Decoupiersäge einspannst.',
+                                    inputs: [
+                                        { type: 'text', placeholder: '1.', maxLength: 80 },
+                                        { type: 'text', placeholder: '2.', maxLength: 80 },
+                                        { type: 'text', placeholder: '3.', maxLength: 80 },
+                                        { type: 'text', placeholder: '4.', maxLength: 80 },
+                                        { type: 'text', placeholder: '5.', maxLength: 80 }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            image: 'stichsaege.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Besonderheit', maxLength: 50 },
                                 { type: 'text', placeholder: 'Wofür verwendet?', maxLength: 50 }
                             ]
-                        },
+                        }
+                    ],
+                    dangerousTools: [
                         {
-                            question: 'Werkzeug 3',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendung a)', maxLength: 40 },
-                                { type: 'text', placeholder: 'Verwendung b)', maxLength: 40 }
+                            title: 'Diese Sägen dürfen nur von der Lehrperson benutzt werden.',
+                            tools: [
+                                {
+                                    image: 'bandsaege.jpg',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                        { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
+                                    ]
+                                },
+                                {
+                                    image: 'tischkreissaege.jpg',
+                                    inputs: [
+                                        { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                        { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
+                                    ]
+                                }
                             ]
-                        },
-                        {
-                            question: 'Werkzeug 4',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Besonderheit der Zähne', maxLength: 50 },
-                                { type: 'text', placeholder: 'Schnittrichtung', maxLength: 30 }
-                            ]
-                        },
+                        }
+                    ],
+                    questions: [
                         {
                             question: 'Unterschied Holz- und Metallsägeblatt:',
                             inputs: [
                                 { type: 'textarea', placeholder: 'Unterschiede erklären (3 Zeilen)', rows: 3, maxLength: 150 }
-                            ]
-                        }
-                    ]
-                },
-                { 
-                    id: 'saegen-2', 
-                    title: 'Sägen - Seite 2', 
-                    type: 'content', 
-                    images: ['bandsaege.jpg', 'tischkreissaege.jpg', 'cutter.jpg'],
-                    questions: [
-                        {
-                            question: 'Werkzeug 1',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendung', maxLength: 50 },
-                                { type: 'text', placeholder: 'Sicherheitsregel', maxLength: 60 }
-                            ]
-                        },
-                        {
-                            question: 'Werkzeug 2',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendung', maxLength: 50 },
-                                { type: 'text', placeholder: 'WICHTIGSTE Sicherheitsregel', maxLength: 60 }
-                            ]
-                        },
-                        {
-                            question: 'Werkzeug 3',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendung', maxLength: 40 },
-                                { type: 'text', placeholder: 'Sicherheit beachten', maxLength: 50 }
                             ]
                         }
                     ]
@@ -582,55 +676,70 @@ const Workbook = {
         { 
             id: 'andere-werkzeuge', 
             title: 'Andere nützliche Werkzeuge', 
-            category: 'Werkzeuge',
+            category: 'WERKZEUGE',
             pages: [
                 { 
-                    id: 'andere-1', 
+                    id: 'andere-alle', 
                     title: 'Andere nützliche Werkzeuge', 
-                    type: 'content', 
-                    images: ['heissluft_foehn.jpg', 'innensechskant.jpg', 'metallschraubstock.jpg', 'holzschraubstock.jpg', 'schraubzwinge.jpg', 'ahle.jpg'],
-                    questions: [
+                    type: 'content',
+                    toolsWithImages: [
                         {
-                            question: 'Werkzeug 1',
+                            image: 'heissluft_foehn.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendung a)', maxLength: 40 },
-                                { type: 'text', placeholder: 'Verwendung b)', maxLength: 40 }
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
+                                { type: 'text', placeholder: 'Verwendung a)', maxLength: 50 },
+                                { type: 'text', placeholder: 'Verwendung b)', maxLength: 50 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 2',
+                            image: 'ahle.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
                                 { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 3',
+                            image: 'innensechskant.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
                                 { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 4',
+                            image: 'schraubzwinge.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
                                 { type: 'text', placeholder: 'Besonderheit (Material)', maxLength: 50 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 5',
+                            image: 'metallschraubstock.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
                                 { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 6',
+                            image: 'holzschraubstock.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 30 },
                                 { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
+                            ]
+                        },
+                        {
+                            image: 'cutter.jpg',
+                            isSpecial: true,
+                            horizontalNames: [
+                                { type: 'text', placeholder: 'Name 1', maxLength: 25 },
+                                { type: 'text', placeholder: 'Name 2', maxLength: 25 },
+                                { type: 'text', placeholder: 'Name 3', maxLength: 25 }
+                            ],
+                            specialQuestion: 'Worauf ist bei der Anwendung besonders zu achten?',
+                            inputs: [
+                                { type: 'text', placeholder: 'a)', maxLength: 60 },
+                                { type: 'text', placeholder: 'b)', maxLength: 60 },
+                                { type: 'text', placeholder: 'c)', maxLength: 60 },
+                                { type: 'text', placeholder: 'd)', maxLength: 60 }
                             ]
                         }
                     ]
@@ -639,17 +748,16 @@ const Workbook = {
         },
         { 
             id: 'kleben', 
-            title: 'KLEBEN', 
-            category: 'Verbindungen',
+            title: 'Kleben', 
+            category: 'VERBINDUNGEN',
             pages: [
                 { 
-                    id: 'kleben-1', 
+                    id: 'kleben-alle', 
                     title: 'KLEBEN', 
-                    type: 'content', 
-                    images: ['weissleim.jpg', 'heisskleber.jpg', 'alleskleber.jpg', '2k_kleber.jpg'],
-                    questions: [
+                    type: 'content',
+                    toolsWithImages: [
                         {
-                            question: 'Klebstoff 1',
+                            image: 'weissleim.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Klebstoffs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Verwendet für Material:', maxLength: 40 },
@@ -657,7 +765,7 @@ const Workbook = {
                             ]
                         },
                         {
-                            question: 'Klebstoff 2',
+                            image: 'heisskleber.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Klebstoffs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Vorteil', maxLength: 40 },
@@ -665,14 +773,14 @@ const Workbook = {
                             ]
                         },
                         {
-                            question: 'Klebstoff 3',
+                            image: 'alleskleber.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Klebstoffs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Verwendet für:', maxLength: 50 }
                             ]
                         },
                         {
-                            question: 'Klebstoff 4',
+                            image: '2k_kleber.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Klebstoffs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Besonderheit', maxLength: 50 },
@@ -685,17 +793,16 @@ const Workbook = {
         },
         { 
             id: 'loeten', 
-            title: 'LÖTEN', 
-            category: 'Verbindungen',
+            title: 'Löten', 
+            category: 'VERBINDUNGEN',
             pages: [
                 { 
-                    id: 'loeten-1', 
+                    id: 'loeten-alle', 
                     title: 'LÖTEN', 
-                    type: 'content', 
-                    images: ['loetkolben.jpg', 'drittehand.jpg', 'loetfett.jpg', 'loetzinn.jpg', 'zange_abisolier.jpg', 'zange_seitenschneider.jpg'],
-                    questions: [
+                    type: 'content',
+                    toolsWithImages: [
                         {
-                            question: 'Werkzeug 1',
+                            image: 'loetkolben.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Temperatur ca.:', maxLength: 30 },
@@ -703,33 +810,42 @@ const Workbook = {
                             ]
                         },
                         {
-                            question: 'Werkzeug 2',
+                            image: 'drittehand.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Zweck beim Löten:', maxLength: 50 }
                             ]
                         },
                         {
-                            question: 'Material 1',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name des Materials', maxLength: 25 },
-                                { type: 'text', placeholder: 'Zweck:', maxLength: 50 }
-                            ]
-                        },
-                        {
-                            question: 'Material 2',
+                            image: 'loetzinn.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Materials', maxLength: 25 },
                                 { type: 'text', placeholder: 'Material (besteht aus):', maxLength: 40 }
                             ]
                         },
                         {
-                            question: 'Werkzeug 3',
+                            image: 'loetfett.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Materials', maxLength: 25 },
+                                { type: 'text', placeholder: 'Zweck:', maxLength: 50 }
+                            ]
+                        },
+                        {
+                            image: 'zange_abisolier.jpg',
                             inputs: [
                                 { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
                                 { type: 'text', placeholder: 'Verwendung', maxLength: 50 }
                             ]
                         },
+                        {
+                            image: 'zange_seitenschneider.jpg',
+                            inputs: [
+                                { type: 'text', placeholder: 'Name des Werkzeugs', maxLength: 25 },
+                                { type: 'text', placeholder: 'Verwendung beim Löten', maxLength: 50 }
+                            ]
+                        }
+                    ],
+                    questions: [
                         {
                             question: 'Die 4 wichtigsten Schritte beim Löten:',
                             inputs: [
@@ -746,79 +862,100 @@ const Workbook = {
         { 
             id: 'material-technik', 
             title: 'Material und Technik', 
-            category: 'Materialien',
+            category: 'MATERIALIEN',
             pages: [
                 { 
-                    id: 'material-1', 
-                    title: 'Material und Technik - Seite 1', 
-                    type: 'content', 
-                    images: ['Nagel.jpg', 'stoss.jpg', 'gehrung.jpg', 'schraube.jpg'],
-                    questions: [
+                    id: 'material-alle', 
+                    title: 'MATERIAL UND TECHNIK', 
+                    type: 'content',
+                    toolsWithImages: [
                         {
-                            question: 'Verbindung 1',
+                            image: 'Nagel.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name der Verbindung', maxLength: 25 },
-                                { type: 'text', placeholder: 'Vorteil', maxLength: 30 },
-                                { type: 'text', placeholder: 'Nachteil', maxLength: 30 }
+                                { type: 'text', placeholder: 'Name', maxLength: 25 }
                             ]
                         },
                         {
-                            question: 'Verbindung 2',
+                            image: 'schraube.jpg',
                             inputs: [
-                                { type: 'text', placeholder: 'Name der Verbindung', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendet bei:', maxLength: 40 }
-                            ]
-                        },
-                        {
-                            question: 'Verbindung 3',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name der Verbindung', maxLength: 25 },
-                                { type: 'text', placeholder: 'Verwendet für:', maxLength: 50 }
-                            ]
-                        },
-                        {
-                            question: 'Verbindung 4',
-                            inputs: [
-                                { type: 'text', placeholder: 'Name der Verbindung', maxLength: 25 },
-                                { type: 'text', placeholder: 'Benötigt Werkzeug:', maxLength: 30 }
+                                { type: 'text', placeholder: 'Name', maxLength: 25 }
                             ]
                         }
-                    ]
-                },
-                { 
-                    id: 'material-2', 
-                    title: 'Material und Technik - Seite 2', 
-                    type: 'content', 
-                    images: ['senker_01.jpg', 'senker_02.jpg', 'senker_03.jpg', 'Naturholz.jpg', 'Holzwerkstoff.jpg', 'aussaegen.jpg'],
-                    questions: [
+                    ],
+                    additionalQuestions: [
                         {
-                            question: 'Warum Löcher senken? (Bilder 1-3)',
+                            question: 'Warum soll man ein kleines Loch ins Holz bohren bevor man einen Nagel einschlägt oder eine Schraube hinein dreht?',
                             inputs: [
-                                { type: 'text', placeholder: 'Grund für Senker:', maxLength: 50 },
-                                { type: 'text', placeholder: 'Schraubenkopf soll:', maxLength: 40 }
-                            ]
-                        },
-                        {
-                            question: 'Naturholz',
-                            inputs: [
-                                { type: 'text', placeholder: 'Definition:', maxLength: 50 },
-                                { type: 'text', placeholder: 'Beispiel:', maxLength: 30 }
-                            ]
-                        },
-                        {
-                            question: 'Holzwerkstoff',
-                            inputs: [
-                                { type: 'text', placeholder: 'Definition:', maxLength: 50 },
-                                { type: 'text', placeholder: 'Beispiele:', maxLength: 50 }
-                            ]
-                        },
-                        {
-                            question: 'Aussägen bedeutet:',
-                            inputs: [
-                                { type: 'textarea', placeholder: 'Erklärung der Technik (2 Zeilen)', rows: 2, maxLength: 100 }
+                                { type: 'textarea', placeholder: 'Antwort', rows: 2, maxLength: 150 }
                             ]
                         }
-                    ]
+                    ],
+                    drawingSection: {
+                        instruction: 'Zeichne eine Verbindung auf Gehrung und eine auf Stoss',
+                        canvases: [
+                            { label: 'auf Gehrung', id: 'gehrung-canvas' },
+                            { label: 'auf Stoss', id: 'stoss-canvas' }
+                        ]
+                    },
+                    postDrawingQuestions: [
+                        {
+                            question: 'Mit welchem Werkzeug kann ich den rechten Winkel einstellen?',
+                            inputs: [
+                                { type: 'text', placeholder: 'Antwort', maxLength: 50 }
+                            ]
+                        },
+                        {
+                            question: 'Welchen Trick gibt es noch um eine bestimmte Bohrtiefe zu bestimmen?',
+                            inputs: [
+                                { type: 'text', placeholder: 'Antwort', maxLength: 80 }
+                            ]
+                        }
+                    ],
+                    holzartenSection: {
+                        items: [
+                            {
+                                image: 'Naturholz.jpg',
+                                inputs: [
+                                    { type: 'text', placeholder: 'Name der Holzart', maxLength: 30 },
+                                    { type: 'text', placeholder: 'Eigenschaft 1', maxLength: 50 },
+                                    { type: 'text', placeholder: 'Eigenschaft 2', maxLength: 50 }
+                                ]
+                            },
+                            {
+                                image: 'Holzwerkstoff.jpg',
+                                inputs: [
+                                    { type: 'text', placeholder: 'Name der Holzart', maxLength: 30 },
+                                    { type: 'text', placeholder: 'Eigenschaft 1', maxLength: 50 },
+                                    { type: 'text', placeholder: 'Eigenschaft 2', maxLength: 50 }
+                                ]
+                            }
+                        ]
+                    },
+                    schraubenVersenkSection: {
+                        question: 'Wie versenkt man eine Schraube?',
+                        steps: [
+                            {
+                                image: 'senker_01.jpg',
+                                input: { type: 'textarea', placeholder: 'Schritt 1', rows: 3, maxLength: 150 }
+                            },
+                            {
+                                image: 'senker_02.jpg',
+                                input: { type: 'textarea', placeholder: 'Schritt 2', rows: 3, maxLength: 150 }
+                            },
+                            {
+                                image: 'senker_03.jpg',
+                                input: { type: 'textarea', placeholder: 'Schritt 3', rows: 3, maxLength: 150 }
+                            }
+                        ]
+                    },
+                    aussaegenSection: {
+                        question: 'Wie säge ich eine Form innerhalb einer Platte heraus?',
+                        image: 'aussaegen.jpg',
+                        inputs: [
+                            { type: 'textarea', placeholder: 'Schritt 1', rows: 2, maxLength: 100 },
+                            { type: 'textarea', placeholder: 'Schritt 2', rows: 2, maxLength: 100 }
+                        ]
+                    }
                 }
             ]
         }
@@ -874,8 +1011,13 @@ const Workbook = {
             li.classList.toggle('active', li.dataset.topicId === topicId);
         });
         
-        // Topic-Overview anzeigen
-        this.renderTopicOverview(topic);
+        // Bei Werkstattregeln, Sicherheit, Zangen, Schraubenzieher, andere-werkzeuge, messen, bohren, standbohrmaschine, schleifen, saegen, kleben, loeten und material-technik direkt zur einzigen Seite
+        if ((topicId === 'werkstattregeln' || topicId === 'sicherheit' || topicId === 'zangen' || topicId === 'schraubenzieher' || topicId === 'andere-werkzeuge' || topicId === 'messen' || topicId === 'bohren' || topicId === 'standbohrmaschine' || topicId === 'schleifen' || topicId === 'saegen' || topicId === 'kleben' || topicId === 'loeten' || topicId === 'material-technik') && topic.pages.length === 1) {
+            this.loadPage(topic.pages[0].id);
+        } else {
+            // Topic-Overview anzeigen
+            this.renderTopicOverview(topic);
+        }
     },
     
     // Topic-Overview rendern - MS-05 Grundstruktur
@@ -951,8 +1093,440 @@ const Workbook = {
         // Kombinierte Bilder + Eingabefelder HTML generieren
         let contentHTML = '';
         
+        // Kombinierte Werkzeug-Sektionen (für alle Werkzeuge zusammen)
+        if (page.combinedSections && page.combinedSections.length > 0) {
+            contentHTML = `
+                <div class="combined-tools-page" id="werkzeuge-anfang">
+                    <div class="tool-nav">
+                        <a href="#werkzeuge-anfang" class="tool-nav-link main-title">WERKZEUGE&nbsp;&nbsp;UND&nbsp;&nbsp;MASCHINEN</a>
+                        ${page.combinedSections.map(section => `
+                            <a href="#${section.id}" class="tool-nav-link">${section.title}</a>
+                        `).join('')}
+                    </div>
+                    
+                    ${page.combinedSections.map(section => `
+                        <div id="${section.id}" class="tool-section">
+                            <h2 class="tool-section-title">${section.title}</h2>
+                            <div class="tools-with-images">
+                                ${section.toolsWithImages ? section.toolsWithImages.map((tool, tIdx) => `
+                                    <div class="tool-item ${tool.isSpecial ? 'cutter-special' : ''}">
+                                        <div class="tool-layout">
+                                            <img src="images/${tool.image}" alt="Werkzeug ${tIdx + 1}" class="tool-image">
+                                            <div class="tool-inputs">
+                                                ${tool.isSpecial && tool.horizontalNames ? `
+                                                    <div class="horizontal-names">
+                                                        ${tool.horizontalNames.map((input, iIdx) => `
+                                                            <input 
+                                                                type="${input.type}" 
+                                                                placeholder="${input.placeholder}"
+                                                                maxlength="${input.maxLength || 25}"
+                                                                class="workbook-input name-input"
+                                                            >
+                                                        `).join('')}
+                                                    </div>
+                                                    ${tool.specialQuestion ? `
+                                                        <div class="special-question-text">${tool.specialQuestion}</div>
+                                                    ` : ''}
+                                                ` : ''}
+                                                ${tool.inputs.map((input, iIdx) => `
+                                                    <input 
+                                                        type="${input.type}" 
+                                                        placeholder="${input.placeholder}"
+                                                        maxlength="${input.maxLength || 50}"
+                                                        class="workbook-input tool-input"
+                                                    >
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('') : ''}
+                                
+                                ${section.specialSection ? `
+                                    <div class="special-section">
+                                        <div class="special-layout">
+                                            <img src="images/${section.specialSection.mainImage}" alt="Aufsätze" class="tool-image">
+                                            <div class="special-content">
+                                                <img src="images/${section.specialSection.smallImage}" alt="Akkubohrer" class="small-image">
+                                                <p class="special-text">${section.specialSection.text}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                
+                                ${section.finalQuestion ? `
+                                    <div class="final-question">
+                                        <div class="question-group">
+                                            <p class="question-text">${section.finalQuestion.question}</p>
+                                            <div class="inputs-container">
+                                                ${section.finalQuestion.inputs.map((input, iIdx) => `
+                                                    <input 
+                                                        type="${input.type}" 
+                                                        placeholder="${input.placeholder}"
+                                                        maxlength="${input.maxLength || 50}"
+                                                        class="workbook-input"
+                                                    >
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        // Werkzeug-Struktur mit Bildern (für Zangen und Schraubenzieher)
+        else if (page.toolsWithImages && page.toolsWithImages.length > 0) {
+            contentHTML = `
+                <div class="tools-with-images">
+                    ${page.toolsWithImages.map((tool, tIdx) => `
+                        <div class="tool-item ${tool.isSpecial ? 'cutter-special' : ''}">
+                                <div class="tool-layout">
+                                    <img src="images/${tool.image}" alt="Werkzeug ${tIdx + 1}" class="tool-image">
+                                    <div class="tool-inputs">
+                                    ${tool.isSpecial && tool.horizontalNames ? `
+                                        <div class="horizontal-names">
+                                            ${tool.horizontalNames.map((input, iIdx) => `
+                                                <input 
+                                                    type="${input.type}" 
+                                                    placeholder="${input.placeholder}"
+                                                    maxlength="${input.maxLength || 25}"
+                                                    class="workbook-input name-input"
+                                                >
+                                            `).join('')}
+                                        </div>
+                                        ${tool.specialQuestion ? `
+                                            <div class="special-question-text">${tool.specialQuestion}</div>
+                                        ` : ''}
+                                        ${tool.inputs.map((input, iIdx) => `
+                                            <input 
+                                                type="${input.type}" 
+                                                placeholder="${input.placeholder}"
+                                                maxlength="${input.maxLength || 60}"
+                                                class="workbook-input tool-input"
+                                            >
+                                        `).join('')}
+                                    ` : `
+                                        ${tool.inputs.map((input, iIdx) => `
+                                            <input 
+                                                type="${input.type}" 
+                                                placeholder="${input.placeholder}"
+                                                maxlength="${input.maxLength || 50}"
+                                                class="workbook-input tool-input"
+                                            >
+                                        `).join('')}
+                                    `}
+                                </div>
+                            </div>
+                            ${tool.specialQuestions ? `
+                                <div class="tool-special-questions">
+                                    ${tool.specialQuestions.map((question, qIdx) => `
+                                        <div class="special-question-group">
+                                            <h4 class="special-question-text">${question.question}</h4>
+                                            <div class="special-question-inputs">
+                                                ${question.inputs.map((input, iIdx) => `
+                                                    <input 
+                                                        type="${input.type}" 
+                                                        placeholder="${input.placeholder}"
+                                                        maxlength="${input.maxLength || 60}"
+                                                        class="workbook-input"
+                                                    >
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                    
+                    ${page.additionalQuestions ? `
+                        <div class="additional-questions">
+                            ${page.additionalQuestions.map((question, qIdx) => `
+                                <div class="question-group">
+                                    <p class="question-text">${question.question}</p>
+                                    <div class="inputs-container">
+                                        ${question.inputs.map((input, iIdx) => `
+                                            <${input.type === 'textarea' ? 'textarea' : 'input'} 
+                                                ${input.type !== 'textarea' ? `type="${input.type}"` : ''}
+                                                placeholder="${input.placeholder}"
+                                                ${input.rows ? `rows="${input.rows}"` : ''}
+                                                maxlength="${input.maxLength || 50}"
+                                                class="workbook-input ${input.type === 'textarea' ? 'workbook-textarea' : ''}"
+                                            >${input.type === 'textarea' ? '</textarea>' : ''}
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    ${page.drawingSection ? `
+                        <div class="drawing-section">
+                            <p class="drawing-instruction">${page.drawingSection.instruction}</p>
+                            <div class="dual-canvas-container">
+                                ${page.drawingSection.canvases.map(canvas => `
+                                    <div class="canvas-item">
+                                        <div class="canvas-container" data-canvas-id="${canvas.id}">
+                                            <canvas id="${canvas.id}" width="300" height="200"></canvas>
+                                        </div>
+                                        <p class="canvas-label">${canvas.label}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${page.postDrawingQuestions ? `
+                        <div class="post-drawing-questions">
+                            ${page.postDrawingQuestions.map((question, qIdx) => `
+                                <div class="question-group">
+                                    <p class="question-text">${question.question}</p>
+                                    <div class="inputs-container">
+                                        ${question.inputs.map((input, iIdx) => `
+                                            <${input.type === 'textarea' ? 'textarea' : 'input'} 
+                                                ${input.type !== 'textarea' ? `type="${input.type}"` : ''}
+                                                placeholder="${input.placeholder}"
+                                                ${input.rows ? `rows="${input.rows}"` : ''}
+                                                maxlength="${input.maxLength || 50}"
+                                                class="workbook-input ${input.type === 'textarea' ? 'workbook-textarea' : ''}"
+                                            >${input.type === 'textarea' ? '</textarea>' : ''}
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    ${page.holzartenSection ? `
+                        <div class="holzarten-section">
+                            <div class="holzarten-container">
+                                ${page.holzartenSection.items.map(item => `
+                                    <div class="holzart-item">
+                                        <img src="images/${item.image}" alt="Holzart" class="holzart-image">
+                                        <div class="holzart-inputs">
+                                            ${item.inputs.map(input => `
+                                                <input 
+                                                    type="${input.type}" 
+                                                    placeholder="${input.placeholder}"
+                                                    maxlength="${input.maxLength || 50}"
+                                                    class="workbook-input holzart-input"
+                                                >
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${page.schraubenVersenkSection ? `
+                        <div class="schrauben-versenk-section">
+                            <p class="question-text">${page.schraubenVersenkSection.question}</p>
+                            <div class="steps-container">
+                                ${page.schraubenVersenkSection.steps.map((step, idx) => `
+                                    <div class="step-item">
+                                        <img src="images/${step.image}" alt="Schritt ${idx + 1}" class="step-image">
+                                        <textarea 
+                                            placeholder="${step.input.placeholder}"
+                                            rows="${step.input.rows || 3}"
+                                            maxlength="${step.input.maxLength || 150}"
+                                            class="workbook-input workbook-textarea step-input"
+                                        ></textarea>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${page.aussaegenSection ? `
+                        <div class="aussaegen-section">
+                            <p class="question-text">${page.aussaegenSection.question}</p>
+                            <div class="aussaegen-layout">
+                                <div class="aussaegen-image">
+                                    <img src="images/${page.aussaegenSection.image}" alt="Aussägen" class="aussaegen-img">
+                                </div>
+                                <div class="aussaegen-inputs">
+                                    ${page.aussaegenSection.inputs.map(input => `
+                                        <textarea 
+                                            placeholder="${input.placeholder}"
+                                            rows="${input.rows || 2}"
+                                            maxlength="${input.maxLength || 100}"
+                                            class="workbook-input workbook-textarea aussaegen-input"
+                                        ></textarea>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${page.dangerousTools ? `
+                        ${page.dangerousTools.map(section => `
+                            <div class="dangerous-tools-section">
+                                <h3 class="dangerous-tools-title">${section.title}</h3>
+                                <div class="dangerous-tools-container">
+                                    ${section.tools.map((tool, tIdx) => `
+                                        <div class="tool-item">
+                                            <div class="tool-layout">
+                                                <img src="images/${tool.image}" alt="Werkzeug ${tIdx + 1}" class="tool-image">
+                                                <div class="tool-inputs">
+                                                    ${tool.inputs.map((input, iIdx) => `
+                                                        <input 
+                                                            type="${input.type}" 
+                                                            placeholder="${input.placeholder}"
+                                                            maxlength="${input.maxLength || 50}"
+                                                            class="workbook-input tool-input"
+                                                        >
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    ` : ''}
+                    
+                    ${page.specialSection ? `
+                        <div class="special-section">
+                            ${page.specialSection.type === 'nagelSchraube' ? `
+                                <div class="nagel-schraube-layout">
+                                    <div class="image-pair">
+                                        <div class="image-with-input">
+                                            <img src="images/${page.specialSection.images[0]}" alt="Nagel" class="tool-image">
+                                            <input 
+                                                type="${page.specialSection.inputs[0].type}" 
+                                                placeholder="${page.specialSection.inputs[0].placeholder}"
+                                                maxlength="${page.specialSection.inputs[0].maxLength || 25}"
+                                                class="workbook-input"
+                                            >
+                                        </div>
+                                        <div class="image-with-input">
+                                            <img src="images/${page.specialSection.images[1]}" alt="Schraube" class="tool-image">
+                                            <input 
+                                                type="${page.specialSection.inputs[1].type}" 
+                                                placeholder="${page.specialSection.inputs[1].placeholder}"
+                                                maxlength="${page.specialSection.inputs[1].maxLength || 25}"
+                                                class="workbook-input"
+                                            >
+                                        </div>
+                                    </div>
+                                    <div class="question-below">
+                                        <p class="question-text">${page.specialSection.question}</p>
+                                        <textarea 
+                                            placeholder="${page.specialSection.questionInput.placeholder}"
+                                            rows="${page.specialSection.questionInput.rows || 2}"
+                                            maxlength="${page.specialSection.questionInput.maxLength || 150}"
+                                            class="workbook-input workbook-textarea"
+                                        ></textarea>
+                                    </div>
+                                </div>
+                            ` : `
+                                <div class="special-layout">
+                                    <img src="images/${page.specialSection.mainImage}" alt="Aufsätze" class="tool-image">
+                                    <div class="special-content">
+                                        <img src="images/${page.specialSection.smallImage}" alt="Akkubohrer" class="small-image">
+                                        <p class="special-text">${page.specialSection.text}</p>
+                                    </div>
+                                </div>
+                            `}
+                        </div>
+                    ` : ''}
+                    
+                    ${page.finalQuestion ? `
+                        <div class="final-question">
+                            <div class="question-group">
+                                <p class="question-text">${page.finalQuestion.question}</p>
+                                <div class="inputs-container">
+                                    ${page.finalQuestion.inputs.map((input, iIdx) => `
+                                        <input 
+                                            type="${input.type}" 
+                                            placeholder="${input.placeholder}"
+                                            maxlength="${input.maxLength || 50}"
+                                            class="workbook-input"
+                                        >
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        // Neue Struktur mit Sections (für Sicherheit)
+        else if (page.sections && page.sections.length > 0) {
+            contentHTML = `
+                <div class="page-sections">
+                    ${page.sections.map((section, sIdx) => `
+                        <div class="section-block">
+                            <h3 class="section-subtitle">${section.subtitle}</h3>
+                            ${section.images ? `
+                                <div class="section-images">
+                                    ${section.images.map(img => `<img src="images/${img}" alt="${img}" class="section-image">`).join('')}
+                                </div>
+                            ` : ''}
+                            ${section.questions ? `
+                                <div class="questions-list">
+                                    ${section.questions.map((q, qIdx) => `
+                                        <div class="question-group ${q.icon ? 'with-icon' : ''}">
+                                            ${q.icon ? `
+                                                <div class="question-icon-layout">
+                                                    <img src="images/${q.icon}" alt="${q.question}" class="injury-icon">
+                                                    <p class="question-text">${q.question}</p>
+                                                </div>
+                                            ` : `
+                                                <p class="question-text">${q.question}</p>
+                                            `}
+                                            ${q.inputsWithIcons ? `
+                                                <div class="inputs-with-icons">
+                                                    ${q.inputsWithIcons.map((input, iIdx) => `
+                                                        <div class="input-icon-row">
+                                                            <img src="images/${input.icon}" alt="Icon ${iIdx + 1}" class="safety-icon">
+                                                            <input 
+                                                                type="${input.type}" 
+                                                                placeholder="${input.placeholder}"
+                                                                maxlength="${input.maxLength || 70}"
+                                                                class="workbook-input-wide"
+                                                            >
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                            ` : q.inputs ? `
+                                                <div class="inputs-container">
+                                                    ${q.inputs.map((input, iIdx) => `
+                                                        ${input.type === 'textarea' ? `
+                                                            <textarea 
+                                                                placeholder="${input.placeholder}"
+                                                                rows="${input.rows || 2}"
+                                                                maxlength="${input.maxLength || 200}"
+                                                                class="workbook-textarea"
+                                                            ></textarea>
+                                                        ` : `
+                                                            <input 
+                                                                type="${input.type}" 
+                                                                placeholder="${input.placeholder}"
+                                                                maxlength="${input.maxLength || 50}"
+                                                                class="workbook-input"
+                                                            >
+                                                        `}
+                                                    `).join('')}
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
         // Einfache Inputs (z.B. für Name/Klasse) - ohne Bilder
-        if (page.inputs && page.inputs.length > 0) {
+        else if (page.inputs && page.inputs.length > 0) {
             contentHTML = `
                 <div class="page-inputs">
                     ${page.inputs.map((input, idx) => `
@@ -966,6 +1540,86 @@ const Workbook = {
                         </div>
                     `).join('')}
                 </div>
+            `;
+        }
+        
+        // Machine Layout (für Standbohrmaschine)
+        else if (page.machineLayout) {
+            contentHTML = `
+                <div class="machine-layout">
+                    <div class="machine-image-section">
+                        <div class="machine-image-container">
+                            <img src="images/${page.machineLayout.image}" alt="${page.title}" class="machine-image">
+                        </div>
+                    </div>
+                    <div class="machine-details">
+                        <div class="machine-name">
+                            <input 
+                                type="${page.machineLayout.nameInput.type}" 
+                                placeholder="${page.machineLayout.nameInput.placeholder}"
+                                maxlength="${page.machineLayout.nameInput.maxLength || 40}"
+                                class="workbook-input machine-name-input"
+                            >
+                        </div>
+                        <div class="machine-properties">
+                            ${page.machineLayout.properties.map((input, idx) => `
+                                <input 
+                                    type="${input.type}" 
+                                    placeholder="${input.placeholder}"
+                                    maxlength="${input.maxLength || 50}"
+                                    class="workbook-input"
+                                >
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                ${page.machineLayout.imageQuestion ? `
+                    <div class="machine-full-width-question">
+                        <h4 class="question-text">${page.machineLayout.imageQuestion.question}</h4>
+                        <div class="question-inputs">
+                            ${page.machineLayout.imageQuestion.inputs.map((input, idx) => `
+                                <input 
+                                    type="${input.type}" 
+                                    placeholder="${input.placeholder}"
+                                    maxlength="${input.maxLength || 60}"
+                                    class="workbook-input"
+                                >
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+                ${page.questions ? `
+                    <div class="machine-questions">
+                        ${page.questions.map((q, qIdx) => `
+                            <div class="question-group">
+                                <h4 class="question-text">${q.question}</h4>
+                                <div class="question-inputs">
+                                    ${q.inputs.map((input, idx) => {
+                                        if (input.type === 'textarea') {
+                                            return `
+                                                <textarea 
+                                                    placeholder="${input.placeholder}"
+                                                    rows="${input.rows || 3}"
+                                                    maxlength="${input.maxLength || 200}"
+                                                    class="workbook-textarea"
+                                                ></textarea>
+                                            `;
+                                        } else {
+                                            return `
+                                                <input 
+                                                    type="${input.type}" 
+                                                    placeholder="${input.placeholder}"
+                                                    maxlength="${input.maxLength || 60}"
+                                                    class="workbook-input"
+                                                >
+                                            `;
+                                        }
+                                    }).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
             `;
         }
         
@@ -1075,9 +1729,6 @@ const Workbook = {
         
         content.innerHTML = `
             <div class="page-header">
-                <button class="back-btn" onclick="Workbook.loadTopic('${page.topicId}')">
-                    ← Zurück zur Übersicht
-                </button>
                 <h2>${page.title}</h2>
                 <!-- MS-09: Save Button -->
                 <button id="savePageBtn" class="btn btn-primary" onclick="Workbook.savePage()">
@@ -1093,6 +1744,7 @@ const Workbook = {
                 </div>
                 `}
                 ${this.createDrawingAreas(page)}
+                ${page.schieblehreQuestion ? this.renderSchieblehreQuestion(page.schieblehreQuestion) : ''}
             </div>
         `;
         
@@ -1148,6 +1800,57 @@ const Workbook = {
             default:
                 return '';
         }
+    },
+    
+    // Schieblehre Question rendering
+    renderSchieblehreQuestion(schieblehreQuestion) {
+        return `
+            <div class="schieblehre-question-section">
+                <div class="schieblehre-layout-main">
+                    <div class="schieblehre-image-large">
+                        <img src="images/schieblehre_messen.jpg" alt="Schieblehre" class="schieblehre-main-image">
+                    </div>
+                    <div class="schieblehre-name-input">
+                        <input 
+                            type="text" 
+                            placeholder="Name des Werkzeugs"
+                            maxlength="30"
+                            class="workbook-input"
+                        >
+                    </div>
+                </div>
+                <h3 class="schieblehre-question-title">${schieblehreQuestion.question}</h3>
+                <div class="schieblehre-sections">
+                    ${schieblehreQuestion.sections.map((section, idx) => {
+                        const colors = ['blue', 'green', 'yellow'];
+                        const colorClass = colors[idx] || 'blue';
+                        return `
+                            <div class="schieblehre-section">
+                                <div class="color-box ${colorClass}-box"></div>
+                                <div class="section-inputs">
+                                    <input 
+                                        type="text" 
+                                        placeholder="${section.title}"
+                                        maxlength="30"
+                                        class="workbook-input section-name-input"
+                                    >
+                                    <div class="answer-inputs">
+                                        ${section.inputs.map((input, inputIdx) => `
+                                            <input 
+                                                type="${input.type}" 
+                                                placeholder="${input.placeholder}"
+                                                maxlength="${input.maxLength || 50}"
+                                                class="workbook-input"
+                                            >
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
     },
     
     // MS-08: Zeichenbereiche für spezifische Seite initialisieren

@@ -1,18 +1,37 @@
-// Auth Module - Einfache Authentifizierung
+// Auth Module - Mit GitHub Gist Integration
 const Auth = {
-    // Test-Benutzer
+    // Fallback Benutzer (falls Gist nicht erreichbar)
     users: [
-        { name: 'Kaspar Haessig', class: 'B26c', password: '001b26c' },
-        { name: 'Kim Kellerman', class: 'B26b', password: '001b26b' },
-        { name: 'Heike Beer', class: 'B26b', password: '002b26b' }
+        { name: 'Demo User', class: 'Demo', password: 'demo123' }
     ],
+    
+    // Gist URL - Live-Daten von GitHub Gist
+    gistUrl: 'https://gist.githubusercontent.com/kaspar62/f46f16d621bef3f4998297ba3f2c2d7a/raw/ea84a22061475fd3ad2dfcbe81872a50dafc52f6/werkstattheft-users.json',
     
     // Aktueller Benutzer
     currentUser: null,
     
-    // Login Funktion
+    // Initialisierung - Lade Benutzer vom Gist
+    async init() {
+        try {
+            console.log('Lade Benutzerdaten...');
+            const response = await fetch(this.gistUrl);
+            
+            if (response.ok) {
+                const data = await response.json();
+                this.users = data.users;
+                console.log(`${this.users.length} Benutzer geladen`);
+            } else {
+                console.warn('Gist nicht erreichbar, verwende Fallback');
+            }
+        } catch (error) {
+            console.error('Fehler beim Laden der Benutzerdaten:', error);
+            console.warn('Verwende Fallback-Benutzer');
+        }
+    },
+    
+    // Login Funktion (unverändert)
     login(username, password) {
-        // MS-15: Verbesserte Input Validierung
         if (!username || typeof username !== 'string' || username.trim() === '') {
             return { 
                 success: false, 
@@ -27,14 +46,12 @@ const Auth = {
             };
         }
         
-        // MS-15: Sichere String-Behandlung
         const cleanUsername = username.trim();
         const cleanPassword = password.trim();
         
-        // Benutzer suchen mit robusterer Vergleichslogik
         const user = this.users.find(u => {
             if (!u.name || !u.password) {
-                console.warn('MS-15: Invalid user data found:', u);
+                console.warn('Invalid user data found:', u);
                 return false;
             }
             return u.name.toLowerCase().trim() === cleanUsername.toLowerCase() && 
@@ -42,18 +59,16 @@ const Auth = {
         });
         
         if (user) {
-            // MS-15: Sichere User-Objekterstellung
             this.currentUser = { 
                 name: user.name,
                 class: user.class
             };
             
-            // MS-15: Error-Handling für Storage
             try {
                 Storage.saveUser(this.currentUser);
                 return { success: true, user: this.currentUser };
             } catch (error) {
-                console.error('MS-15: Failed to save user:', error);
+                console.error('Failed to save user:', error);
                 return { 
                     success: false, 
                     error: 'Fehler beim Speichern. Bitte erneut versuchen.' 
@@ -69,7 +84,6 @@ const Auth = {
         try {
             const savedUser = Storage.getUser();
             if (savedUser && savedUser.name && savedUser.class) {
-                // MS-15: Validiere gespeicherte User-Daten
                 this.currentUser = {
                     name: savedUser.name,
                     class: savedUser.class
@@ -77,12 +91,11 @@ const Auth = {
                 return true;
             }
         } catch (error) {
-            console.error('MS-15: Auto-login failed:', error);
-            // MS-15: Clear corrupted data
+            console.error('Auto-login failed:', error);
             try {
                 Storage.clearUser();
             } catch (clearError) {
-                console.error('MS-15: Failed to clear corrupted user data:', clearError);
+                console.error('Failed to clear corrupted user data:', clearError);
             }
         }
         return false;
@@ -90,11 +103,10 @@ const Auth = {
     
     // Benutzer abrufen
     getUser() {
-        // MS-15: Defensive Kopie zurückgeben
         return this.currentUser ? { ...this.currentUser } : null;
     },
     
-    // MS-15: Validiere aktuellen User
+    // Validiere aktuellen User
     isAuthenticated() {
         return this.currentUser !== null && 
                this.currentUser.name && 
@@ -107,13 +119,17 @@ const Auth = {
         try {
             Storage.clearAll();
         } catch (error) {
-            console.error('MS-15: Logout cleanup failed:', error);
-            // Try alternative cleanup
+            console.error('Logout cleanup failed:', error);
             try {
                 Storage.clearUser();
             } catch (clearError) {
-                console.error('MS-15: Failed to clear user data:', clearError);
+                console.error('Failed to clear user data:', clearError);
             }
         }
     }
 };
+
+// Initialisiere Auth beim Laden
+window.addEventListener('DOMContentLoaded', async () => {
+    await Auth.init();
+});
